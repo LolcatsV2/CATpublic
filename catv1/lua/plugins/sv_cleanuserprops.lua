@@ -28,11 +28,6 @@ concommand.Add("cat_cleanuserprops", function( ply, command, arguments )
 	
 	CAT_LogAction(ply, "Cleaned up "..victim:Nick().."'s props.")
 	
-	for k, v in pairs (ents.GetAll()) do
-		if (v:GetNWString("owner")) then
-			if (v:GetNWString("owner") == victim:Nick()) then
-				v:Remove()
-			end
-		end
-	end	
+	cleanup.CC_Cleanup(victim, "", {})
+
 end)

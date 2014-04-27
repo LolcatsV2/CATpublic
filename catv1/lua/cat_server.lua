@@ -1,7 +1,4 @@
 if (SERVER) then
-
-resource.AddWorkshop( "227448723" ) -- Silkicons Pack. You're going to want this.
-
 AddCSLuaFile("autorun/cat_init.lua")
 AddCSLuaFile("cat_client.lua")
 include("cat_CONFIG.lua")
