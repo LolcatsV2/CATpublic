@@ -388,11 +388,12 @@ timer.Create("CAT_DoBans", 5, 1, function()
 	for k, v in pairs (files) do
 		
 		local toberead = string.Explode(" ", file.Read("cat/bans/"..v, "DATA"))
-		local timeleft = math.floor((toberead[2] - os.time())/60)
 		
 		if (toberead[2] == "never") then
 		game.ConsoleCommand("banid 0 "..toberead[1].." \n")
 		return end
+		
+		local timeleft = math.floor((toberead[2] - os.time())/60)
 		
 		game.ConsoleCommand("banid "..timeleft.." "..toberead[1].." \n")
 	
