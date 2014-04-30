@@ -16,6 +16,13 @@ concommand.Add("cat_ban", function( ply, command, arguments )
 		
 	return end	
 	
+	if (isstring(arguments[5])) then -- Contingency for redoing a ban
+		CAT_Ban(arguments[1], arguments[2], arguments[3], tonumber(arguments[4]), arguments[5])
+		local undofixname = string.gsub(arguments[5], "_", " ")
+		local undofixreason = string.gsub(arguments[3], "_", " ")
+		CAT_LogAction(ply, "Re-banned "..undofixname.." for: "..arguments[4].." minutes".." for reason: "..undofixreason)
+	return end
+	
 	local victim = CAT_FindPlayerUserID( arguments[1] )
 	local btime = tonumber(arguments[3])
 	local reason = "Banned by: "..ply:Nick().." for reason: "..arguments[2].." for: "..btime.." minutes."
@@ -31,10 +38,9 @@ concommand.Add("cat_ban", function( ply, command, arguments )
 	CAT_LogAction(ply, "Banned "..victim:Nick().." for: "..btime.." for reason: "..arguments[2])
 	
 	if (!isnumber(btime)) then return end	
-
 	
-	CAT_Ban(victim, reason, btime)
-
+	CAT_Ban(ply, victim, arguments[2], btime)
+	game.ConsoleCommand("kickid "..victim:UserID().." \""..reason.."\"\n")
 	
 	
 end)

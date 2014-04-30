@@ -1,3 +1,30 @@
+CAT_BanTable = CAT_BanTable or {}
+CAT_BanTable.ban = {}
+net.Receive("cat_sendbans", function(len)
+
+	local name = net.ReadString()
+	local sid = net.ReadString()
+	local ubdate = net.ReadString()
+	local reason = net.ReadString()
+	local brname = net.ReadString()
+
+	CAT_BanTable.ban[sid] = {}
+	CAT_BanTable.ban[sid].name = name
+	CAT_BanTable.ban[sid].id = sid
+	CAT_BanTable.ban[sid].ubdate = ubdate
+	CAT_BanTable.ban[sid].reason = reason
+	CAT_BanTable.ban[sid].brname = brname
+end
+)
+
+net.Receive("cat_removeban", function(len)
+
+	local sid = net.ReadString()
+
+	CAT_BanTable.ban[sid] = nil
+end
+)
+
 concommand.Add("+CAT_menu", function(ply, command, arguments)
 
 local canopen = false
@@ -8,8 +35,10 @@ local canopen = false
 		canopen = true
 	elseif ply:GetNWString("CAT_Usergroup") == "admin" then
 		canopen = true
+	elseif ply:GetNWString("CAT_Usergroup") == "moderator" then
+		canopen = true
 	end
-	if canopen != true then return end -- A really dumb way of doing it, but it works.
+	if canopen != true then return end -- A really dumb way of doing it, but it works... for now.
 
 
 	
@@ -121,14 +150,189 @@ local canopen = false
 	
 	-- unban
 	local unban = utilcmds:AddOption( "Unban", function()
-		Derma_StringRequest( 
-			"Unban", 
-			"Input the SteamID you want to unban.",
-			"",
-			function( text )
-				RunConsoleCommand("cat_unban", tostring(victim), tostring(text))
-			end,
-			function( text ) end)
+		
+		
+		local bgboard = vgui.Create("DFrame")
+		bgboard:SetSize(640, 480)
+		bgboard:Center()
+		bgboard:SetTitle("")
+		bgboard:MakePopup()
+		bgboard.Paint = function()
+			draw.RoundedBox( 8, 0, 0, bgboard:GetWide(), bgboard:GetTall(), Color( 255, 255, 255, 255 ) )
+		end
+		
+		local bantbl = vgui.Create("DListView", bgboard)
+		bantbl:SetSize(bgboard:GetWide()-30, bgboard:GetTall()-70)
+		bantbl:SetPos(15, 30)
+		bantbl:AddColumn( "Name" ):SetFixedWidth(150)
+		bantbl:AddColumn( "SteamID" ):SetFixedWidth(120)
+		bantbl:AddColumn( "Reason" ):SetFixedWidth(120)
+		bantbl:AddColumn( "Banned By" ):SetFixedWidth(100)	
+		bantbl:AddColumn( "Ban Remaining" )		
+		
+		local rbutton = vgui.Create("DButton", bgboard) -- todo: figure out why you have to press twice
+		rbutton:SetSize(140,30)
+		rbutton:SetPos(bantbl:GetWide()/5, bantbl:GetTall()+35)
+		rbutton:SetText("Refresh Ban Table")
+		rbutton.DoClick = function()
+		bantbl:Clear()
+			RunConsoleCommand("cat_refreshbans")
+			
+			for k, v in pairs (CAT_BanTable.ban) do
+		
+			local undofixreason = string.gsub(CAT_BanTable.ban[k].reason, "_", " ")
+			local undofixname = string.gsub(CAT_BanTable.ban[k].name, "_", " ")
+			local undofixbrname = string.gsub(CAT_BanTable.ban[k].brname, "_", " ")
+			
+			if (CAT_BanTable.ban[k].ubdate == "never") then
+				bantbl:AddLine(undofixname, CAT_BanTable.ban[k].id, undofixreason, undofixbrname, CAT_BanTable.ban[k].ubdate)
+			else
+				bantbl:AddLine(undofixname, CAT_BanTable.ban[k].id, undofixreason, undofixbrname, CAT_BanTable.ban[k].ubdate.." minutes")
+			end
+		end
+		end
+		
+		local ubutton = vgui.Create("DButton", bgboard)
+		ubutton:SetSize(140,30)
+		ubutton:SetPos(bantbl:GetWide()-335, bantbl:GetTall()+35)
+		ubutton:SetText("Unban")
+		ubutton.DoClick = function()
+			local selectedn = bantbl:GetSelectedLine()
+			local getsline = bantbl:GetLine(selectedn)
+			if (!IsValid(getsline)) then return end
+			RunConsoleCommand("cat_unban", getsline:GetValue(2) )
+			bantbl:RemoveLine(selectedn)
+		end
+		
+		local ebutton = vgui.Create("DButton", bgboard)
+		ebutton:SetSize(140,30)
+		ebutton:SetPos(bantbl:GetWide()-180, bantbl:GetTall()+35)
+		ebutton:SetText("Edit Ban")
+		ebutton.DoClick = function()
+			
+			local selectedn = bantbl:GetSelectedLine()
+			local getsline = bantbl:GetLine(selectedn)
+			if (!IsValid(getsline)) then return end
+			
+			
+			local editmenu = vgui.Create("DFrame")
+			editmenu:SetSize(320, 280)
+			editmenu:Center()
+			editmenu:SetTitle("Ban List")
+			editmenu:MakePopup()
+			
+			local nametag = vgui.Create("DLabel", editmenu)
+			nametag:SetPos(28, 43)
+			nametag:SetText("Name: ")
+			nametag:SizeToContents()
+			
+			
+			local namebox = vgui.Create( "DTextEntry", editmenu )
+			namebox:SetPos( 60, 40 )
+			namebox:SetSize( 180, 20 )
+			namebox:SetText( getsline:GetValue(1) )
+			namebox.OnEnter = function( self )
+				chat.AddText( self:GetValue() )
+			end
+			
+			local steamidtag = vgui.Create("DLabel", editmenu)
+			steamidtag:SetPos(15, 83)
+			steamidtag:SetText("SteamID: ")
+			steamidtag:SizeToContents()
+			
+			
+			local sidbox = vgui.Create( "DTextEntry", editmenu )
+			sidbox:SetPos( 60, 80 )
+			sidbox:SetSize( 180, 20 )
+			sidbox:SetText( getsline:GetValue(2) )
+			sidbox.OnEnter = function( self )
+				chat.AddText( self:GetValue() )
+			end
+			
+			local reasontag = vgui.Create("DLabel", editmenu)
+			reasontag:SetPos(20, 123)
+			reasontag:SetText("Reason: ")
+			reasontag:SizeToContents()
+			
+			
+			local reasonbox = vgui.Create( "DTextEntry", editmenu )
+			reasonbox:SetPos( 60, 120 )
+			reasonbox:SetSize( 180, 20 )
+			reasonbox:SetText( getsline:GetValue(3) )
+			reasonbox.OnEnter = function( self )
+				chat.AddText( self:GetValue() )
+			end
+			
+			local bbytag = vgui.Create("DLabel", editmenu)
+			bbytag:SetPos(4, 163)
+			bbytag:SetText("Banned by: ")
+			bbytag:SizeToContents()
+			
+			
+			local bbybox = vgui.Create( "DTextEntry", editmenu )
+			bbybox:SetPos( 60, 160 )
+			bbybox:SetSize( 180, 20 )
+			bbybox:SetText( getsline:GetValue(4) )
+			bbybox.OnEnter = function( self )
+				chat.AddText( self:GetValue() )
+			end
+			
+			local banltag = vgui.Create("DLabel", editmenu)
+			banltag:SetPos(2, 203)
+			banltag:SetText("Ban Length: ")
+			banltag:SizeToContents()
+			
+			
+			local banlbox = vgui.Create( "DTextEntry", editmenu )	
+			banlbox:SetPos( 60, 200 )
+			banlbox:SetSize( 180, 20 )
+			local fixlength = string.gsub(getsline:GetValue(5), " minutes", "")
+			banlbox:SetText( fixlength )
+			banlbox.OnEnter = function( self )
+				chat.AddText( self:GetValue() )	
+			end
+			
+			local redoban = vgui.Create("DButton", editmenu)
+			redoban:SetSize(140,30)
+			redoban:SetPos(90, 235)
+			redoban:SetText("Do Ban")
+			redoban.DoClick = function()
+			
+			if (namebox:GetValue() == "" or sidbox:GetValue() == "" or reasonbox:GetValue() == "" or bbybox:GetValue() == "" or banlbox:GetValue() == "") then return end
+			
+			local fixbrname = string.gsub(bbybox:GetValue(), " ", "_")
+			local fixname = string.gsub(namebox:GetValue(), " ", "_")
+			local fixreason = string.gsub(reasonbox:GetValue(), " ", "_")
+
+			
+			RunConsoleCommand("cat_ban", fixbrname, sidbox:GetValue(), fixreason,  banlbox:GetValue(), fixname )
+			
+			editmenu:Close()
+			
+			end
+			
+			
+			
+			
+			
+		end
+		
+		
+		for k, v in pairs (CAT_BanTable.ban) do
+		
+		local undofixreason = string.gsub(CAT_BanTable.ban[k].reason, "_", " ")
+		local undofixname = string.gsub(CAT_BanTable.ban[k].name, "_", " ")
+		local undofixbrname = string.gsub(CAT_BanTable.ban[k].brname, "_", " ")
+
+		
+		if (CAT_BanTable.ban[k].ubdate == "never") then
+			bantbl:AddLine(undofixname, CAT_BanTable.ban[k].id, undofixreason, undofixbrname, CAT_BanTable.ban[k].ubdate)
+		else
+			bantbl:AddLine(undofixname, CAT_BanTable.ban[k].id, undofixreason, undofixbrname, CAT_BanTable.ban[k].ubdate.." minutes")
+		end
+		end
+		
+		
 	end):SetIcon("icon16/heart_add.png")
 	
 	-- Cleanup props menu

@@ -5,6 +5,7 @@ Mainly used for core functions
 MsgN("[[CAT]] CAT Core Functions loaded! [[CAT]]")
 	
 
+
 if (!file.Exists("catusergroups", "DATA")) then 
 	MsgN("[[CAT]] Creating usergroups for the first time... [[CAT]]")
 	file.CreateDir("catusergroups")
@@ -242,7 +243,7 @@ end)
 hook.Add("PlayerDisconnected", "catremoveuser", function(ply)
 	
 	if (file.Exists("catusergroups/user/"..ply:UniqueID()..".txt", "DATA")) then
-		file.Delete("catusergroups/user/"..ply:UniqueID()..".txt", ply:Nick())
+		file.Delete("catusergroups/user/"..ply:UniqueID()..".txt")
 	end
 
 	
@@ -320,49 +321,111 @@ function CAT_CanDoAction(ply, action)
 	cando = false
 	return cando
 	end
-		
-		
-		
-		
 end
-function CAT_Ban(vic, reason, time)
+
+CAT_Bans = CAT_Bans or {}
+util.AddNetworkString("cat_removeban")
+util.AddNetworkString("cat_sendbans")
+
+function CAT_Ban(ply, vic, reason, time, vicname)
+
+if (isstring(vicname)) then -- Contingency for redoing a ban
+	
+	local fixedid = string.sub(vic, 11)
+	local unbanneddate = os.time() + time*60
+	local sid = vic -- For the sake of neatness.
+	local brname = ply
+	local fixreason = string.gsub(reason, " ", "_")
+	local fixname = string.gsub(vicname, " ", "_")
+	local fixbrname = string.gsub(brname, " ", "_")
+
+	if (time == 0) then
+
+	net.Start("cat_sendbans")
+			net.WriteString(fixname)
+			net.WriteString(sid)
+			net.WriteString("never")
+			net.WriteString(fixreason)
+			net.WriteString(fixbrname)
+		net.Broadcast()
+
+
+		file.Write("cat/bans/"..fixedid..".txt", fixname.." "..sid.." never".." "..fixreason.." "..brname)
+		game.ConsoleCommand("banid "..time.." "..vic.." \n")		
+		
+		else
+		
+		local time = tonumber(time)
+		
+		net.Start("cat_sendbans")
+			net.WriteString(fixname)
+			net.WriteString(sid)
+			net.WriteString(tostring(time))
+			net.WriteString(fixreason)
+			net.WriteString(brname)
+		net.Broadcast()
+		
+		file.Write("cat/bans/"..fixedid..".txt", fixname.." "..sid.." "..tostring(unbanneddate).." "..fixreason.." "..brname )
+		game.ConsoleCommand("banid "..time.." "..vic.." \n")
+		
+	end
+else -- Do a normal ban
 
 local fixedid = string.sub(vic:SteamID(), 11)
 local unbanneddate = os.time() + time*60
+local sid = vic:SteamID() -- For the sake of neatness.
+local brname = ply:Nick()
+local fixreason = string.gsub(reason, " ", "_")
+local fixname = string.gsub(vic:Nick(), " ", "_")
+local fixbrname = string.gsub(brname, " ", "_")
 
 if (time == 0) then
-	file.Write("cat/bans/"..fixedid..".txt", vic:SteamID().." never")
+
+	net.Start("cat_sendbans")
+		net.WriteString(fixname)
+		net.WriteString(sid)
+		net.WriteString("never")
+		net.WriteString(fixreason)
+		net.WriteString(fixbrname)
+	net.Broadcast()
+
+	file.Write("cat/bans/"..fixedid..".txt", fixname.." "..sid.." never".." "..fixreason.." "..fixbrname)
 	game.ConsoleCommand("banid "..time.." "..vic:UserID().." \n")
-	game.ConsoleCommand("kickid "..vic:UserID().." \""..reason.."\"\n")
+		
 	else
 	
+	net.Start("cat_sendbans")
+		net.WriteString(fixname)
+		net.WriteString(sid)
+		net.WriteString(tostring(time))
+		net.WriteString(fixreason)
+		net.WriteString(fixbrname)
+	net.Broadcast()
 	
-	file.Write("cat/bans/"..fixedid..".txt", vic:SteamID().." "..tostring(unbanneddate))
+	
+	file.Write("cat/bans/"..fixedid..".txt", fixname.." "..sid.." "..tostring(unbanneddate).." "..fixreason.." "..fixbrname )
 	game.ConsoleCommand("banid "..time.." "..vic:UserID().." \n")
-	game.ConsoleCommand("kickid "..vic:UserID().." \""..reason.."\"\n")
-end
+	
+		end
+	end
 end
 function CAT_Unban(vicid)
 
 	local fixedid = string.sub(vicid, 11)
 	local files, direcs = file.Find("cat/bans/"..fixedid..".txt", "DATA")
 
+	net.Start("cat_removeban")
+		net.WriteString(vicid)
+	net.Broadcast()
+	
 	for k, v in pairs (files) do
 		
 		local toberead = string.Explode(" ", file.Read("cat/bans/"..v, "DATA"))
 		
-		game.ConsoleCommand("removeid "..toberead[1].." \n")
+		game.ConsoleCommand("removeid "..toberead[2].." \n")
 		file.Delete("cat/bans/"..v)
 	end
 end
-		
-		
-
-
-
-
-
-
 
 timer.Create("CAT_checkforunban", 5, 0, function()
 
@@ -372,12 +435,11 @@ timer.Create("CAT_checkforunban", 5, 0, function()
 			
 		local toberead = string.Explode(" ", file.Read("cat/bans/"..v, "DATA"))
 
-		if toberead[2] == "never" then return end
+		if toberead[3] == "never" then return end
 		
-		if (tonumber(toberead[2]) < os.time()) then
-			game.ConsoleCommand("removeid "..toberead[1].." \n")
+		if (tonumber(toberead[3]) < os.time()) then
+			game.ConsoleCommand("removeid "..toberead[2].." \n")
 			file.Delete("cat/bans/"..v)
-			--return
 		end
 	end
 end)
@@ -389,17 +451,16 @@ timer.Create("CAT_DoBans", 5, 1, function()
 		
 		local toberead = string.Explode(" ", file.Read("cat/bans/"..v, "DATA"))
 		
-		if (toberead[2] == "never") then
-		game.ConsoleCommand("banid 0 "..toberead[1].." \n")
+		if (toberead[3] == "never") then
+			game.ConsoleCommand("banid 0 "..toberead[2].." \n")
 		return end
 		
-		local timeleft = math.floor((toberead[2] - os.time())/60)
+		local timeleft = math.floor((toberead[3] - os.time())/60)
 		
-		game.ConsoleCommand("banid "..timeleft.." "..toberead[1].." \n")
+		game.ConsoleCommand("banid "..timeleft.." "..toberead[2].." \n")
 	
 	end
 end)
-
 
 hook.Add("PlayerAuthed", "CAT_Gatekeeper", function(ply, stid, unid)
 
@@ -408,17 +469,78 @@ hook.Add("PlayerAuthed", "CAT_Gatekeeper", function(ply, stid, unid)
 	for k, v in pairs (files) do
 			
 		local toberead = string.Explode(" ", file.Read("cat/bans/"..v, "DATA"))
-		if (toberead[1] == stid) then
+		if (toberead[2] == stid) then
 			ply:Kick("You are banned! D:")
 		end
 	end
 end)
 
-			
+hook.Add("PlayerInitialSpawn", "CAT_sendbantbl", function(ply)
+
+local files, direcs = file.Find("cat/bans/*.txt", "DATA")
+
+for k, v in pairs (files) do
+	
+	local toberead = string.Explode(" ", file.Read("cat/bans/"..v, "DATA"))
+	
+if (toberead[3] == "never") then
+
+	net.Start("cat_sendbans")
+		net.WriteString(toberead[1])
+		net.WriteString(toberead[2])
+		net.WriteString(toberead[3])
+		net.WriteString(toberead[4])
+		net.WriteString(toberead[5])
+	net.Send(ply)
+else
+
+local fixtime = tonumber(toberead[3])
+local realbtime = math.floor((fixtime - os.time())/60)
+
+	net.Start("cat_sendbans")
+		net.WriteString(toberead[1])
+		net.WriteString(toberead[2])
+		net.WriteString(tostring(realbtime))
+		net.WriteString(toberead[4])
+		net.WriteString(toberead[5])
+	net.Send(ply)
+	end
+end
+end)
+
+concommand.Add("cat_refreshbans", function(ply, cmd, arguments)
+
+	local files, direcs = file.Find("cat/bans/*.txt", "DATA")
+
+	for k, v in pairs (files) do
+		
+		local toberead = string.Explode(" ", file.Read("cat/bans/"..v, "DATA"))
+		
+	if (toberead[3] == "never") then
+
+		net.Start("cat_sendbans")
+			net.WriteString(toberead[1])
+			net.WriteString(toberead[2])
+			net.WriteString(toberead[3])
+			net.WriteString(toberead[4])
+			net.WriteString(toberead[5])
+		net.Send(ply)
+	else
 
 
+	local fixtime = tonumber(toberead[3])
+	local realbtime = math.floor((fixtime - os.time())/60)
 
-
+		net.Start("cat_sendbans")
+			net.WriteString(toberead[1])
+			net.WriteString(toberead[2])
+			net.WriteString(tostring(realbtime))
+			net.WriteString(toberead[4])
+			net.WriteString(toberead[5])
+		net.Send(ply)
+		end
+end
+end)
 
 local PLAYER = FindMetaTable("Player")
 function PLAYER:ReturnGroupNumber()
@@ -481,17 +603,11 @@ function PLAYER:IsBetterOrSame( caller )
 
 return cannotdo
 
-
-
 end
-
-
-
-
-
 
 
 if (!catrcmd) then
 	catrcmd = {}
 	catrcmd.ConsoleCommand = game.ConsoleCommand
 end
+
