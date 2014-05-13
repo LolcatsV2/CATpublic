@@ -440,6 +440,11 @@ timer.Create("CAT_checkforunban", 5, 0, function()
 		if (tonumber(toberead[3]) < os.time()) then
 			game.ConsoleCommand("removeid "..toberead[2].." \n")
 			file.Delete("cat/bans/"..v)
+			
+			net.Start("cat_removeban")
+				net.WriteString(toberead[2])
+			net.Broadcast()
+			
 		end
 	end
 end)
