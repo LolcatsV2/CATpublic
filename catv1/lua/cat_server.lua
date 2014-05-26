@@ -1,6 +1,8 @@
 if (SERVER) then
 AddCSLuaFile("autorun/cat_init.lua")
 AddCSLuaFile("cat_client.lua")
+AddCSLuaFile("cat_shared.lua")
+include("cat_shared.lua")
 include("cat_CONFIG.lua")
 include("sv_catmotd.lua")
 include("sv_chat.lua")

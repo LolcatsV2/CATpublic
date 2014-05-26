@@ -46,28 +46,27 @@ function CAT_TellAll( CALLER, ACTION )
 	
 	if (CAT_Config.TellAdmins) then
 		for _, pl in pairs(player.GetAll()) do
-			if (CAT_CanDoAction(pl, "isadmin")) then
-				if CALLER == "Console" then
-				pl:ChatPrint( "CONSOLE -> " .. ACTION )
-				else
-				pl:ChatPrint(CALLER:Nick() .. " -> " .. ACTION)
-				end
+		if (CAT_CanDoAction(pl, "isadmin")) then
+			if CALLER == "Console" then
+			CAT_PlayerMsg(pl, Color(0, 80, 209), "CONSOLE -> ", Color(242, 255, 0), ACTION)
+			else
+			CAT_PlayerMsg(pl, Color(242, 255, 0), CALLER:Nick(), Color(255, 255, 255), " -> "..ACTION)
 			end
 		end
 	end
-	
+end
 	
 	if (!CAT_Config.TellAll) then return end
 	
 	for _, pl in pairs(player.GetAll()) do
-
 		if (CAT_CanDoAction(pl, "isadmin")) and (CAT_Config.TellAdmins) then return end
+		
 		if (CAT_Config.TellAnonymous) then
-		pl:ChatPrint( "Someone -> " .. ACTION )
+			CAT_PlayerMsg(pl, Color(0, 80, 209), "SOMEONE -> ", Color(242, 255, 0), ACTION)
 		elseif CALLER == "Console" then
-		pl:ChatPrint("CONSOLE -> " .. ACTION)
+			CAT_PlayerMsg(pl, Color(0, 80, 209), "CONSOLE -> ", Color(242, 255, 0), ACTION)
 		else
-		pl:ChatPrint(CALLER:Nick() .. " -> " .. ACTION)
+			CAT_PlayerMsg(pl, Color(242, 255, 0), CALLER:Nick(), Color(255, 255, 255), " -> "..ACTION)
 		end
 	end
 	
@@ -438,12 +437,7 @@ timer.Create("CAT_checkforunban", 5, 0, function()
 		if toberead[3] == "never" then return end
 		
 		if (tonumber(toberead[3]) < os.time()) then
-			game.ConsoleCommand("removeid "..toberead[2].." \n")
-			file.Delete("cat/bans/"..v)
-			
-			net.Start("cat_removeban")
-				net.WriteString(toberead[2])
-			net.Broadcast()
+			CAT_Unban(toberead[2])
 			
 		end
 	end
