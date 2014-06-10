@@ -559,7 +559,7 @@ CAT_OwnerRank = 100
 		return CAT_VipRank
 	end
 	if CAT_GetUserGroup(self) == "moderator" then
-		return CAT_VipRank
+		return CAT_ModRank
 	end
 	if CAT_GetUserGroup(self) == "admin" then
 		return CAT_AdminRank
