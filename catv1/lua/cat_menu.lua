@@ -442,6 +442,15 @@ local canopen = false
 	end
 	pnl:SetIcon("icon16/pill_delete.png")
 	
+	-- Ragdoll/Unragdoll menu
+	local ragdoll, pnl = funcmds:AddSubMenu( "Toggle Ragdoll" )
+	ragdoll:SetMinimumWidth(200)
+	ragdoll.Paint = function()
+		draw.RoundedBoxEx( 6, 0, 0, ragdoll:GetMinimumWidth(), ragdoll:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+	end
+	pnl:SetIcon("icon16/lightning.png")
+	
+	
 	-- Cloak menu
 	local cloak, pnl = funcmds:AddSubMenu( "Cloak" )
 	cloak:SetMinimumWidth(200)
@@ -731,6 +740,11 @@ for k, v in pairs (player.GetAll()) do
 	-- god disable
 	local toungod = ungod:AddOption( v:Nick(), function()
 		RunConsoleCommand("cat_ungod", tostring(victim))
+		rightadminmenu:Hide()
+	end)
+	-- toggle ragdoll
+	local todoll = ragdoll:AddOption( v:Nick(), function()
+		RunConsoleCommand("cat_ragdoll", tostring(victim))
 		rightadminmenu:Hide()
 	end)
 	-- cloak

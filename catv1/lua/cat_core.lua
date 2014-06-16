@@ -436,9 +436,8 @@ timer.Create("CAT_checkforunban", 5, 0, function()
 
 		if toberead[3] == "never" then return end
 		
-		if (tonumber(toberead[3]) < os.time()) then
-			CAT_Unban(toberead[2])
-			
+		if (tonumber(toberead[3]) - os.time() < 0) then
+			CAT_Unban(toberead[2])		
 		end
 	end
 end)
@@ -452,12 +451,13 @@ timer.Create("CAT_DoBans", 5, 1, function()
 		
 		if (toberead[3] == "never") then
 			game.ConsoleCommand("banid 0 "..toberead[2].." \n")
-		return end
-		
-		local timeleft = math.floor((toberead[3] - os.time())/60)
-		
-		game.ConsoleCommand("banid "..timeleft.." "..toberead[2].." \n")
-	
+			
+		else
+			
+			local timeleft = math.floor((toberead[3] - os.time())/60)
+
+			game.ConsoleCommand("banid "..timeleft.." "..toberead[2].." \n")
+		end
 	end
 end)
 
