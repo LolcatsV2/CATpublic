@@ -429,15 +429,17 @@ end
 timer.Create("CAT_checkforunban", 5, 0, function()
 
 	local files, direcs = file.Find("cat/bans/*.txt", "DATA")
-
+	
+	
 	for k, v in pairs (files) do
-			
+	
 		local toberead = string.Explode(" ", file.Read("cat/bans/"..v, "DATA"))
 
-		if toberead[3] == "never" then return end
+		if toberead[3] != "never" then
 		
-		if (tonumber(toberead[3]) - os.time() < 0) then
-			CAT_Unban(toberead[2])		
+			if (tonumber(toberead[3]) <= os.time()) then
+				CAT_Unban(toberead[2])		
+			end
 		end
 	end
 end)
