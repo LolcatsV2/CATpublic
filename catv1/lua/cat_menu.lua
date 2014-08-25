@@ -491,6 +491,14 @@ local canopen = false
 	end
 	pnl:SetIcon("icon16/arrow_up.png")
 	
+	--Bomb menu
+	local bomb, pnl = funcmds:AddSubMenu( "Bomb" )
+	bomb:SetMinimumWidth(200)
+	bomb.Paint = function()
+		draw.RoundedBoxEx( 6, 0, 0, bomb:GetMinimumWidth(), bomb:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+	end
+	pnl:SetIcon("icon16/sport_8ball.png")
+	
 	-- Set Speed menu
 	local gofast, pnl = funcmds:AddSubMenu( "Set Speed" )
 	gofast:SetMinimumWidth(200)
@@ -713,6 +721,11 @@ for k, v in pairs (player.GetAll()) do
 	-- rocket
 	local torocket = rocket:AddOption( v:Nick(), function()
 		RunConsoleCommand("cat_rocket", tostring(victim))
+		rightadminmenu:Hide()
+	end)
+	--bomb
+	local tobomb = bomb:AddOption( v:Nick(), function()
+		RunConsoleCommand("cat_bomb", tostring(victim))
 		rightadminmenu:Hide()
 	end)
 	-- freeze
