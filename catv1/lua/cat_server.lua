@@ -51,6 +51,7 @@ include("plugins/sv_changemap.lua")
 include("plugins/sv_strip.lua")
 include("plugins/sv_slapo.lua")
 include("plugins/sv_unban.lua")
+include("plugins/sv_bomb.lua")
 
 
 
