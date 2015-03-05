@@ -256,15 +256,6 @@ function CAT_CanDoAction(ply, action)
 		cando = true
 	return cando end
 	
-	plyrank = ply:GetNWString("CAT_Usergroup")
-	checkforreal = CAT_GetUserGroup(ply)
-	
-	
-	
-	if checkforreal != plyrank then
-		print(ply:Nick().." TRIED TO CHANGE THEIR USERGROUP. !!NOT GOOD!!")
-	cando = false return cando end
-	
 	if plyrank == "user" then					
 		for k, v in pairs (CAT_Config.userCan) do
 			if v == action then
