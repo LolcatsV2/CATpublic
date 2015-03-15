@@ -228,17 +228,12 @@ function CAT_CanDoAction(ply, action)
 		cando = true
 	return cando end
 	
-<<<<<<< HEAD
 	if (ply:GetNWBool("CB_NoRestrictions")) then return true end
 	
 	local usergroup = CAT_GetUserGroup(ply)
 		
 	if usergroup == "user" then					
 		for k, v in pairs (CAT_Config.UserCan) do
-=======
-	if plyrank == "user" then					
-		for k, v in pairs (CAT_Config.userCan) do
->>>>>>> origin/master
 			if v == action then
 				 cando = true
 				break
