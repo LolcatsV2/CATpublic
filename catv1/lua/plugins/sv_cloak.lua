@@ -3,6 +3,12 @@
 =======by Lolcats========
 =======================*/
 
+local PLUGINNAME = "cloak"
+CAT_Commands[PLUGINNAME] = {}
+CAT_Commands[PLUGINNAME].command = "!cloak"
+CAT_Commands[PLUGINNAME].args = 1
+CAT_Commands[PLUGINNAME].help = "!cloak target"
+
 concommand.Add("cat_cloak", function( ply, command, arguments )
 	
 	if (!IsValid(ply)) then
@@ -22,13 +28,13 @@ concommand.Add("cat_cloak", function( ply, command, arguments )
 			return
 		end
 	
-	victim:SetRenderMode( RENDERMODE_NONE )
-	victim:SetColor( 255, 255, 255, 0 )
-	victim:SetCollisionGroup( COLLISION_GROUP_WEAPON )
+ply:SetRenderMode(4)
+ply:SetColor(Color(255,255,255,0))
+	--victim:SetCollisionGroup( COLLISION_GROUP_WEAPON )
 	
 	for k, v in ipairs( victim:GetWeapons() ) do
-		v:SetRenderMode( RENDERMODE_NONE )
-		v:SetColor( 255, 255, 255, 0 )
+		v:SetRenderMode(4)
+		v:SetColor(Color(255,255,255,0))
 	end
 	
 	CAT_LogAction(ply, "Cloaked "..victim:Nick()..".")

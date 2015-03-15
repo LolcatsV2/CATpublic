@@ -3,6 +3,12 @@
 =======by Lolcats========
 =======================*/
 
+local PLUGINNAME = "bomb"
+CAT_Commands[PLUGINNAME] = {}
+CAT_Commands[PLUGINNAME].command = "!bomb"
+CAT_Commands[PLUGINNAME].args = 1
+CAT_Commands[PLUGINNAME].help = "!bomb target"
+
 concommand.Add("cat_bomb", function( ply, command, arguments )
 		
 	if (!IsValid(ply)) then

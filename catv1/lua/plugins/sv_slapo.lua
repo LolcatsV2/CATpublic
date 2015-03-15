@@ -3,6 +3,12 @@
 =======by Lolcats========
 =======================*/
 
+local PLUGINNAME = "slap"
+CAT_Commands[PLUGINNAME] = {}
+CAT_Commands[PLUGINNAME].command = "!slap"
+CAT_Commands[PLUGINNAME].args = 3
+CAT_Commands[PLUGINNAME].help = "!slap target times damage"
+
 concommand.Add("cat_slap", function( ply, command, arguments )
 	
 	if (!IsValid(ply)) then
@@ -11,9 +17,6 @@ concommand.Add("cat_slap", function( ply, command, arguments )
 	
 	local plycando = CAT_CanDoAction(ply, "slap")
 		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
 	return end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )

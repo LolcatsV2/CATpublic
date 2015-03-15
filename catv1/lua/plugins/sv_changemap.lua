@@ -3,6 +3,13 @@
 =======by Lolcats========
 =======================*/
 
+local PLUGINNAME = "changemap"
+CAT_Commands[PLUGINNAME] = {}
+CAT_Commands[PLUGINNAME].command = "!changemap"
+CAT_Commands[PLUGINNAME].args = 2
+CAT_Commands[PLUGINNAME].help = "!changemap mapname"
+
+
 concommand.Add("cat_changemap", function( ply, command, arguments )
 	
 	if (!IsValid(ply)) then
@@ -11,9 +18,6 @@ concommand.Add("cat_changemap", function( ply, command, arguments )
 	
 	local plycando = CAT_CanDoAction(ply, "changemap")
 		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
 	return end
 	
 	local tomap = arguments[1]

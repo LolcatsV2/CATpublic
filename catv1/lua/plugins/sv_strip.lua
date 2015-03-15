@@ -3,6 +3,12 @@
 =======by Lolcats========
 =======================*/
 
+local PLUGINNAME = "strip"
+CAT_Commands[PLUGINNAME] = {}
+CAT_Commands[PLUGINNAME].command = "!strip"
+CAT_Commands[PLUGINNAME].args = 1
+CAT_Commands[PLUGINNAME].help = "!strip target"
+
 concommand.Add("cat_strip", function( ply, command, arguments )
 	
 	if (!IsValid(ply)) then
@@ -11,9 +17,6 @@ concommand.Add("cat_strip", function( ply, command, arguments )
 	
 	local plycando = CAT_CanDoAction(ply, "strip")
 		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
 	return end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )

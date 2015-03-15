@@ -27,21 +27,14 @@ end
 
 concommand.Add("+CAT_menu", function(ply, command, arguments)
 
-local canopen = false
+	local canopen = false
+	local allowtoopen = {
+	["superadmin"] = true,
+	["admin"] = true
+	}	
 	
-	if ply:GetNWString("CAT_Usergroup") == "owner" then
-		canopen = true
-	elseif ply:GetNWString("CAT_Usergroup") == "superadmin" then
-		canopen = true
-	elseif ply:GetNWString("CAT_Usergroup") == "admin" then
-		canopen = true
-	elseif ply:GetNWString("CAT_Usergroup") == "moderator" then
-		canopen = true
-	end
-	if canopen != true then return end -- A really dumb way of doing it, but it works... for now.
-
-
-	
+	if (allowtoopen[ply:GetUserGroup()]) then canopen = true end	
+	if (canopen != true) then return end 
 	
 	rightadminmenu = vgui.Create("DMenu")
 	rightadminmenu:SetMinimumWidth(200)
@@ -49,7 +42,7 @@ local canopen = false
 		draw.RoundedBoxEx( 6, 0, 0, rightadminmenu:GetMinimumWidth(), rightadminmenu:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
 	end
 	
-	local title = rightadminmenu:AddOption( "CAT V.1", function() end)
+	local title = rightadminmenu:AddOption( "CAT V.1.2", function() end)
 	title:SetPaintBackground(false)
 	--Should add a spacer to keep the submenus from auto opening.
 	rightadminmenu:AddSpacer()
@@ -91,6 +84,37 @@ local canopen = false
 		draw.RoundedBoxEx( 6, 0, 0, tpcmds:GetMinimumWidth(), tpcmds:GetMaxHeight(), Color(255,255,255,255), false, false, false, false)
 	end
 	pnl:SetIcon("icon16/asterisk_yellow.png")
+
+	rightadminmenu:AddSpacer()	
+	
+	
+	if (string.lower(engine.ActiveGamemode()) == "darkrp") then
+		-- "DarkRP" Commands submenu
+		local rpcmds, pnl = rightadminmenu:AddSubMenu( "DarkRP Actions" )
+		rpcmds:SetMinimumWidth(200)
+		rpcmds.Paint = function()
+			draw.RoundedBoxEx( 6, 0, 0, rpcmds:GetMinimumWidth(), rpcmds:GetMaxHeight(), Color(255,255,255,255), false, false, false, false)
+		end
+		pnl:SetIcon("icon16/joystick.png")
+		
+		rightadminmenu:AddSpacer()	
+	end
+	
+	if (ply:GetUserGroup() == "superadmin") then 
+		-- "Panic" button
+		local panic = rightadminmenu:AddOption( "Panic", function()
+			RunConsoleCommand("cat_panic")
+			rightadminmenu:Hide()
+		end):SetIcon("icon16/exclamation.png")
+	
+		rightadminmenu:AddSpacer()
+	
+		-- "Über Panic" button
+		local upanic = rightadminmenu:AddOption( "Über Panic", function()
+			RunConsoleCommand("cat_uberpanic")
+			rightadminmenu:Hide()
+		end):SetIcon("icon16/clock_red.png")	
+	end
 	
 	// Server commands //
 	
@@ -129,6 +153,13 @@ local canopen = false
 			end,
 			function( text ) end)
 	end):SetIcon("icon16/photos.png")
+	
+	-- Devmode Toggle
+	local dodev = servcmds:AddOption( "Toggle Developer Mode", function()
+		RunConsoleCommand("cat_devmode")
+		rightadminmenu:Hide()
+	end):SetIcon("icon16/bug_edit.png")
+	
 
 	// Utility commands //
 	
@@ -150,8 +181,8 @@ local canopen = false
 	
 	-- unban
 	local unban = utilcmds:AddOption( "Unban", function()
-		
-		
+
+
 		local bgboard = vgui.Create("DFrame")
 		bgboard:SetSize(640, 480)
 		bgboard:Center()
@@ -160,7 +191,7 @@ local canopen = false
 		bgboard.Paint = function()
 			draw.RoundedBox( 8, 0, 0, bgboard:GetWide(), bgboard:GetTall(), Color( 255, 255, 255, 255 ) )
 		end
-		
+
 		local bantbl = vgui.Create("DListView", bgboard)
 		bantbl:SetSize(bgboard:GetWide()-30, bgboard:GetTall()-70)
 		bantbl:SetPos(15, 30)
@@ -169,21 +200,44 @@ local canopen = false
 		bantbl:AddColumn( "Reason" ):SetFixedWidth(120)
 		bantbl:AddColumn( "Banned By" ):SetFixedWidth(100)	
 		bantbl:AddColumn( "Ban Remaining" )		
+
+		local searcher = vgui.Create( "DTextEntry", bgboard )
+		searcher:SetPos( 15, bantbl:GetTall()+37 )
+		searcher:SetSize( 115, 25 )
+		searcher:SetText( "Search by SteamID" )
+		searcher.OnEnter = function( self )
+		
+			bantbl:Clear()
+			
+			for k, v in pairs (CAT_BanTable.ban) do
+
+				local undofixreason = string.gsub(CAT_BanTable.ban[k].reason, "_", " ")
+				local undofixname = string.gsub(CAT_BanTable.ban[k].name, "_", " ")
+				local undofixbrname = string.gsub(CAT_BanTable.ban[k].brname, "_", " ")
+	
+				if (CAT_BanTable.ban[k].ubdate == "never") and (CAT_BanTable.ban[k].id == self:GetValue()) then
+					bantbl:AddLine(undofixname, CAT_BanTable.ban[k].id, undofixreason, undofixbrname, CAT_BanTable.ban[k].ubdate)
+				elseif (CAT_BanTable.ban[k].id == self:GetValue()) then
+					bantbl:AddLine(undofixname, CAT_BanTable.ban[k].id, undofixreason, undofixbrname, CAT_BanTable.ban[k].ubdate.." minutes")
+				end		
+			end		
+		end
 		
 		local rbutton = vgui.Create("DButton", bgboard) -- todo: figure out why you have to press twice
-		rbutton:SetSize(140,30)
-		rbutton:SetPos(bantbl:GetWide()/5, bantbl:GetTall()+35)
+		rbutton:SetSize(165,30)
+		rbutton:SetPos(bantbl:GetWide()-470, bantbl:GetTall()+35)
 		rbutton:SetText("Refresh Ban Table")
+		rbutton:SetFont("Trebuchet24")
 		rbutton.DoClick = function()
 		bantbl:Clear()
 			RunConsoleCommand("cat_refreshbans")
-			
+
 			for k, v in pairs (CAT_BanTable.ban) do
-		
+
 			local undofixreason = string.gsub(CAT_BanTable.ban[k].reason, "_", " ")
 			local undofixname = string.gsub(CAT_BanTable.ban[k].name, "_", " ")
 			local undofixbrname = string.gsub(CAT_BanTable.ban[k].brname, "_", " ")
-			
+
 			if (CAT_BanTable.ban[k].ubdate == "never") then
 				bantbl:AddLine(undofixname, CAT_BanTable.ban[k].id, undofixreason, undofixbrname, CAT_BanTable.ban[k].ubdate)
 			else
@@ -191,11 +245,18 @@ local canopen = false
 			end
 		end
 		end
+		rbutton.Paint = function()
+		
+		draw.RoundedBox(2, 0, 0, rbutton:GetWide(), rbutton:GetTall(), Color(150, 255, 150))
+		
+		end
+		
 		
 		local ubutton = vgui.Create("DButton", bgboard)
 		ubutton:SetSize(140,30)
-		ubutton:SetPos(bantbl:GetWide()-335, bantbl:GetTall()+35)
+		ubutton:SetPos(bantbl:GetWide()-295, bantbl:GetTall()+35)
 		ubutton:SetText("Unban")
+		ubutton:SetFont("Trebuchet24")
 		ubutton.DoClick = function()
 			local selectedn = bantbl:GetSelectedLine()
 			local getsline = bantbl:GetLine(selectedn)
@@ -203,30 +264,36 @@ local canopen = false
 			RunConsoleCommand("cat_unban", getsline:GetValue(2) )
 			bantbl:RemoveLine(selectedn)
 		end
+		ubutton.Paint = function()
 		
+		draw.RoundedBox(2, 0, 0, ubutton:GetWide(), ubutton:GetTall(), Color(255, 150, 150))
+		
+		end
+
 		local ebutton = vgui.Create("DButton", bgboard)
 		ebutton:SetSize(140,30)
-		ebutton:SetPos(bantbl:GetWide()-180, bantbl:GetTall()+35)
+		ebutton:SetPos(bantbl:GetWide()-145, bantbl:GetTall()+35)
 		ebutton:SetText("Edit Ban")
+		ebutton:SetFont("Trebuchet24")
 		ebutton.DoClick = function()
-			
+
 			local selectedn = bantbl:GetSelectedLine()
 			local getsline = bantbl:GetLine(selectedn)
 			if (!IsValid(getsline)) then return end
-			
-			
+
+
 			local editmenu = vgui.Create("DFrame")
 			editmenu:SetSize(320, 280)
 			editmenu:Center()
 			editmenu:SetTitle("Ban List")
 			editmenu:MakePopup()
-			
+
 			local nametag = vgui.Create("DLabel", editmenu)
 			nametag:SetPos(28, 43)
 			nametag:SetText("Name: ")
 			nametag:SizeToContents()
-			
-			
+
+
 			local namebox = vgui.Create( "DTextEntry", editmenu )
 			namebox:SetPos( 60, 40 )
 			namebox:SetSize( 180, 20 )
@@ -234,13 +301,13 @@ local canopen = false
 			namebox.OnEnter = function( self )
 				chat.AddText( self:GetValue() )
 			end
-			
+
 			local steamidtag = vgui.Create("DLabel", editmenu)
 			steamidtag:SetPos(15, 83)
 			steamidtag:SetText("SteamID: ")
 			steamidtag:SizeToContents()
-			
-			
+
+
 			local sidbox = vgui.Create( "DTextEntry", editmenu )
 			sidbox:SetPos( 60, 80 )
 			sidbox:SetSize( 180, 20 )
@@ -248,13 +315,13 @@ local canopen = false
 			sidbox.OnEnter = function( self )
 				chat.AddText( self:GetValue() )
 			end
-			
+
 			local reasontag = vgui.Create("DLabel", editmenu)
 			reasontag:SetPos(20, 123)
 			reasontag:SetText("Reason: ")
 			reasontag:SizeToContents()
-			
-			
+
+
 			local reasonbox = vgui.Create( "DTextEntry", editmenu )
 			reasonbox:SetPos( 60, 120 )
 			reasonbox:SetSize( 180, 20 )
@@ -262,13 +329,13 @@ local canopen = false
 			reasonbox.OnEnter = function( self )
 				chat.AddText( self:GetValue() )
 			end
-			
+
 			local bbytag = vgui.Create("DLabel", editmenu)
 			bbytag:SetPos(4, 163)
 			bbytag:SetText("Banned by: ")
 			bbytag:SizeToContents()
-			
-			
+
+
 			local bbybox = vgui.Create( "DTextEntry", editmenu )
 			bbybox:SetPos( 60, 160 )
 			bbybox:SetSize( 180, 20 )
@@ -276,13 +343,13 @@ local canopen = false
 			bbybox.OnEnter = function( self )
 				chat.AddText( self:GetValue() )
 			end
-			
+
 			local banltag = vgui.Create("DLabel", editmenu)
 			banltag:SetPos(2, 203)
 			banltag:SetText("Ban Length: ")
 			banltag:SizeToContents()
-			
-			
+
+
 			local banlbox = vgui.Create( "DTextEntry", editmenu )	
 			banlbox:SetPos( 60, 200 )
 			banlbox:SetSize( 180, 20 )
@@ -291,49 +358,59 @@ local canopen = false
 			banlbox.OnEnter = function( self )
 				chat.AddText( self:GetValue() )	
 			end
-			
+
 			local redoban = vgui.Create("DButton", editmenu)
 			redoban:SetSize(140,30)
 			redoban:SetPos(90, 235)
 			redoban:SetText("Do Ban")
 			redoban.DoClick = function()
-			
+
 			if (namebox:GetValue() == "" or sidbox:GetValue() == "" or reasonbox:GetValue() == "" or bbybox:GetValue() == "" or banlbox:GetValue() == "") then return end
-			
+
 			local fixbrname = string.gsub(bbybox:GetValue(), " ", "_")
 			local fixname = string.gsub(namebox:GetValue(), " ", "_")
 			local fixreason = string.gsub(reasonbox:GetValue(), " ", "_")
 
-			
+
 			RunConsoleCommand("cat_ban", fixbrname, sidbox:GetValue(), fixreason,  banlbox:GetValue(), fixname )
-			
+
 			editmenu:Close()
-			
+
 			end
 			
-			
-			
-			
-			
 		end
+		ebutton.Paint = function()
 		
+		draw.RoundedBox(2, 0, 0, ebutton:GetWide(), ebutton:GetTall(), Color(255, 255, 150))
+		
+		end	
+
+
 		
 		for k, v in pairs (CAT_BanTable.ban) do
-		
+
 		local undofixreason = string.gsub(CAT_BanTable.ban[k].reason, "_", " ")
 		local undofixname = string.gsub(CAT_BanTable.ban[k].name, "_", " ")
 		local undofixbrname = string.gsub(CAT_BanTable.ban[k].brname, "_", " ")
 
-		
+
 		if (CAT_BanTable.ban[k].ubdate == "never") then
 			bantbl:AddLine(undofixname, CAT_BanTable.ban[k].id, undofixreason, undofixbrname, CAT_BanTable.ban[k].ubdate)
 		else
 			bantbl:AddLine(undofixname, CAT_BanTable.ban[k].id, undofixreason, undofixbrname, CAT_BanTable.ban[k].ubdate.." minutes")
 		end
 		end
-		
-		
+
+
 	end):SetIcon("icon16/heart_add.png")
+	
+	--Observer Ban Menu
+	local obsban, pnl = utilcmds:AddSubMenu( "Observer Ban" )
+	obsban:SetMinimumWidth(200)
+	obsban.Paint = function()
+		draw.RoundedBoxEx( 6, 0, 0, obsban:GetMinimumWidth(), obsban:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+	end
+	pnl:SetIcon("icon16/lock.png")
 	
 	-- Cleanup props menu
 	local clean, pnl = utilcmds:AddSubMenu( "Clean User's Props" )
@@ -358,6 +435,14 @@ local canopen = false
 		draw.RoundedBoxEx( 6, 0, 0, CExec:GetMinimumWidth(), CExec:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
 	end
 	pnl:SetIcon("icon16/application_xp.png")
+
+	-- isnt cheater menu
+	local icheat, pnl = utilcmds:AddSubMenu( "Flag as Non-Cheater" )
+	icheat:SetMinimumWidth(200)
+	icheat.Paint = function()
+		draw.RoundedBoxEx( 6, 0, 0, icheat:GetMinimumWidth(), icheat:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+	end
+	pnl:SetIcon("icon16/flag_green.png")
 	
 	-- Set Access menu
 	local Sacc, pnl = utilcmds:AddSubMenu( "Set Access" )
@@ -450,7 +535,6 @@ local canopen = false
 	end
 	pnl:SetIcon("icon16/lightning.png")
 	
-	
 	-- Cloak menu
 	local cloak, pnl = funcmds:AddSubMenu( "Cloak" )
 	cloak:SetMinimumWidth(200)
@@ -507,6 +591,14 @@ local canopen = false
 	end
 	pnl:SetIcon("icon16/lorry.png")
 	
+	-- Firework menu
+	local firefuck, pnl = funcmds:AddSubMenu( "Firework" )
+	firefuck:SetMinimumWidth(200)
+	firefuck.Paint = function()
+		draw.RoundedBoxEx( 6, 0, 0, firefuck:GetMinimumWidth(), firefuck:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+	end
+	pnl:SetIcon("icon16/star.png")
+	
 	-- Set Speed menu
 	local givewep, pnl = funcmds:AddSubMenu( "Give Weapon" )
 	givewep:SetMinimumWidth(200)
@@ -537,7 +629,16 @@ local canopen = false
 	mute.Paint = function()
 		draw.RoundedBoxEx( 6, 0, 0, mute:GetMinimumWidth(), mute:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
 	end
-	pnl:SetIcon("icon16/sound_mute.png")
+	pnl:SetIcon("icon16/pencil_delete.png")
+	
+	-- Voice Mute menu
+	local vmute, pnl = funcmds:AddSubMenu( "Voice Mute" )
+	vmute:SetMinimumWidth(200)
+	vmute.Paint = function()
+		draw.RoundedBoxEx( 6, 0, 0, vmute:GetMinimumWidth(), vmute:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+	end
+	pnl:SetIcon("icon16/sound_mute.png")	
+	
 	
 	
 	// Teleport Commands //
@@ -558,10 +659,54 @@ local canopen = false
 	end
 	pnl:SetIcon("icon16/arrow_right.png")
 	
+	// DarkRP Commands //	
+	if (string.lower(engine.ActiveGamemode()) == "darkrp") then
+
+		-- Set Money menu
+		local setm, pnl = rpcmds:AddSubMenu( "Set Money" )
+		setm:SetMinimumWidth(200)
+		setm.Paint = function()
+			draw.RoundedBoxEx( 6, 0, 0, setm:GetMinimumWidth(), setm:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+		end
+		pnl:SetIcon("icon16/money.png")	
+		
+		-- Set Job menu
+		local setj, pnl = rpcmds:AddSubMenu( "Set Job" )
+		setj:SetMinimumWidth(200)
+		setj.Paint = function()
+			draw.RoundedBoxEx( 6, 0, 0, setj:GetMinimumWidth(), setj:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+		end
+		pnl:SetIcon("icon16/user_go.png")		
+
+		-- Ban Job menu
+		local banj, pnl = rpcmds:AddSubMenu( "Ban from Job" )
+		banj:SetMinimumWidth(200)
+		banj.Paint = function()
+			draw.RoundedBoxEx( 6, 0, 0, banj:GetMinimumWidth(), banj:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+		end
+		pnl:SetIcon("icon16/user_delete.png")		
+
+		-- Unban Job menu
+		local unbanj, pnl = rpcmds:AddSubMenu( "Unban from Job" )
+		unbanj:SetMinimumWidth(200)
+		unbanj.Paint = function()
+			draw.RoundedBoxEx( 6, 0, 0, unbanj:GetMinimumWidth(), unbanj:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+		end
+		pnl:SetIcon("icon16/user_add.png")
+		
+		-- Set Name menu
+		local setn, pnl = rpcmds:AddSubMenu( "Set Name" )
+		setn:SetMinimumWidth(200)
+		setn.Paint = function()
+			draw.RoundedBoxEx( 6, 0, 0, setn:GetMinimumWidth(), setn:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+		end
+		pnl:SetIcon("icon16/house.png")	
+	end
+	
 	
 	rightadminmenu:Open()
-	rightadminmenu:SetPos(ScrW()/4, ScrH()/4)
-	timer.Simple( 0, function() gui.SetMousePos( ScrW()/4+60, ScrH()/4+20 ) end)
+	rightadminmenu:SetPos(ScrW()/4, ScrH()/5.5)
+	timer.Simple( 0, function() gui.SetMousePos( ScrW()/4+60, ScrH()/5.5+20 ) end)
 		
 		
 		
@@ -606,9 +751,21 @@ for k, v in pairs (player.GetAll()) do
 		function( text ) end)
 	end)
 	
+	-- Observer Ban	
+	local toobsban = obsban:AddOption( v:Nick(), function()
+		Derma_StringRequest( 
+			"Observer Ban Player", 
+			"How long do you want to observer ban "..victimname.."?",
+			"",
+			function( text )
+				RunConsoleCommand("cat_observerban", tostring(victim), tostring(text))
+			end,
+			function( text ) end)
+	end)	
+	
 	-- cleanup props
 	local toclean = clean:AddOption( v:Nick(), function()
-		RunConsoleCommand("cat_cleanuserprops", tostring(victim))
+		RunConsoleCommand("cat_cprops", tostring(victim))
 		rightadminmenu:Hide()
 	end)
 	
@@ -629,6 +786,13 @@ for k, v in pairs (player.GetAll()) do
 			function( text ) end)
 		rightadminmenu:Hide()
 	end)
+	
+	-- isnt cheater props
+	local toicheat = icheat:AddOption( v:Nick(), function()
+		RunConsoleCommand("cat_isntcheater", tostring(victim))
+		rightadminmenu:Hide()
+	end)	
+	
 	-- Set Access submenu
 	local saccsub = Sacc:AddSubMenu( v:Nick() )
 	saccsub:SetMinimumWidth(200)
@@ -640,36 +804,25 @@ for k, v in pairs (player.GetAll()) do
 	local subuser = saccsub:AddOption( "User", function()
 		RunConsoleCommand("cat_setaccess", tostring(victim), "user")
 		rightadminmenu:Hide()
-	end):SetIcon( "gui/silkicons/user.vtf" )
-	
-	-- Set Access vip submenu
-	local subvip = saccsub:AddOption( "V.I.P.", function()
-		RunConsoleCommand("cat_setaccess", tostring(victim), "vip")
-		rightadminmenu:Hide()
-	end):SetIcon( "gui/silkicons/medal_gold_3.vtf" )
+	end):SetIcon( "icon16/user.png" )
 	
 	-- Set Access mod submenu
 	local submod = saccsub:AddOption( "Moderator", function()
-		RunConsoleCommand("cat_setaccess", tostring(victim), "moderator")
+		RunConsoleCommand("cat_setaccess", tostring(victim), "mod")
 		rightadminmenu:Hide()
-	end):SetIcon( "gui/silkicons/user_suit.vtf" )
-	
+	end):SetIcon( "icon16/user_gray.png" )	
+
 	-- Set Access admin submenu
-	local subadmin = saccsub:AddOption( "Admin", function()
-		RunConsoleCommand("cat_setaccess", tostring(victim), "admin")
+	local subadmin = saccsub:AddOption( "Staff", function()
+		RunConsoleCommand("cat_setaccess", tostring(victim), "staff")
 		rightadminmenu:Hide()
-	end):SetIcon( "gui/silkicons/star.vtf" )
+	end):SetIcon( "icon16/star.png" )
 	
-	-- Set Access superadmin submenu
-	local subsadmin = saccsub:AddOption( "Superadmin", function()
-		RunConsoleCommand("cat_setaccess", tostring(victim), "superadmin")
-		rightadminmenu:Hide()
-	end):SetIcon( "gui/silkicons/ruby.vtf" )
 		-- Set Access owner submenu
 	local subsadmin = saccsub:AddOption( "Owner", function()
 		RunConsoleCommand("cat_setaccess", tostring(victim), "owner")
 		rightadminmenu:Hide()
-	end):SetIcon( "gui/silkicons/tux.vtf" )
+	end):SetIcon( "icon16/tux.png" )
 	
 	// Fun Command Players //
 	-- set health
@@ -679,7 +832,7 @@ for k, v in pairs (player.GetAll()) do
 			"What do you want to set "..victimname.."'s health to?",
 			"",
 			function( text )
-				RunConsoleCommand("cat_hp", tostring(victim), tostring(text))
+				RunConsoleCommand("cat_health", tostring(victim), tostring(text))
 			end,
 			function( text ) end)
 		rightadminmenu:Hide()
@@ -778,7 +931,7 @@ for k, v in pairs (player.GetAll()) do
 	
 	-- seizure
 	local toseize = seizurepls:AddOption( v:Nick(), function()
-		RunConsoleCommand("cat_seize", tostring(victim))
+		RunConsoleCommand("cat_seizure", tostring(victim))
 		rightadminmenu:Hide()
 	end)
 	-- set speed
@@ -788,11 +941,18 @@ for k, v in pairs (player.GetAll()) do
 			"What do you want to set "..victimname.."'s speed to? (200 is default)",
 			"",
 			function( text )
-				RunConsoleCommand("cat_sspeed", tostring(victim), tostring(text))
+				RunConsoleCommand("cat_setspeed", tostring(victim), tostring(text))
 			end,
 			function( text ) end)
 		rightadminmenu:Hide()
 	end)
+	
+	-- firework
+	local tofirefuck = firefuck:AddOption( v:Nick(), function()
+		RunConsoleCommand("cat_firework", tostring(victim))
+		rightadminmenu:Hide()
+	end)
+	
 	-- give weapon
 	local toseize = givewep:AddOption( v:Nick(), function()
 		Derma_StringRequest( 
@@ -834,7 +994,14 @@ for k, v in pairs (player.GetAll()) do
 		RunConsoleCommand("cat_mute", tostring(victim))
 		rightadminmenu:Hide()
 	end)
-		
+
+		-- Voice Mute
+	local tovmute = vmute:AddOption( v:Nick(), function()
+		RunConsoleCommand("cat_voicemute", tostring(victim))
+		rightadminmenu:Hide()
+	end)
+
+	
 	-- bring
 	local tobring = bring:AddOption( v:Nick(), function()
 		RunConsoleCommand("cat_bring", tostring(victim))
@@ -846,6 +1013,92 @@ for k, v in pairs (player.GetAll()) do
 		RunConsoleCommand("cat_goto", tostring(victim))
 		rightadminmenu:Hide()
 	end)
+	
+	if (string.lower(engine.ActiveGamemode()) == "darkrp") then
+		-- set money
+		local tosetm = setm:AddOption( v:Nick(), function()
+			Derma_StringRequest( 
+				"Set Money", 
+				"How much do you want to set "..victimname.."'s wallet to?",
+				"",
+				function( text )
+					RunConsoleCommand("cat_setmoney", tostring(victim), tostring(text))
+				end,
+				function( text ) end)
+			rightadminmenu:Hide()
+		end)	
+		
+		-- Set Job subsubmenu
+		local setjob = setj:AddSubMenu( v:Nick() )
+		setjob:SetMinimumWidth(200)
+		setjob.Paint = function()
+			draw.RoundedBoxEx( 6, 0, 0, setjob:GetMinimumWidth(), setjob:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+		end	
+		setjob:SetMaxHeight(340)
+		
+		for jobk, value in SortedPairsByMemberValue(team.GetAllTeams(), "Name") do
+		
+			local tosetj = setjob:AddOption( value.Name, function()
+				RunConsoleCommand("cat_setjob", tostring(victim), jobk)
+				rightadminmenu:Hide()
+			end)
+			
+		end
+
+		-- Ban Job subsubmenu
+		local banjob = banj:AddSubMenu( v:Nick() )
+		banjob:SetMinimumWidth(200)
+		banjob.Paint = function()
+			draw.RoundedBoxEx( 6, 0, 0, banjob:GetMinimumWidth(), banjob:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+		end	
+		banjob:SetMaxHeight(340)
+		
+		for jobk, value in SortedPairsByMemberValue(team.GetAllTeams(), "Name") do
+		
+			local tobanj = banjob:AddOption( value.Name, function()
+				Derma_StringRequest( 
+				"Ban from Job", 
+				"How long do you want to ban "..victimname.." from the job for? (In Minutes)",
+				"",
+				function( text )
+					RunConsoleCommand("cat_banjob", tostring(victim), jobk, tostring(text))
+				end,
+				function( text ) end)			
+				rightadminmenu:Hide()
+			end)
+			
+		end
+
+		-- Unban Job subsubmenu
+		local unbanjob = unbanj:AddSubMenu( v:Nick() )
+		unbanjob:SetMinimumWidth(200)
+		unbanjob.Paint = function()
+			draw.RoundedBoxEx( 6, 0, 0, unbanjob:GetMinimumWidth(), unbanjob:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+		end	
+		unbanjob:SetMaxHeight(340)
+		
+		for jobk, value in SortedPairsByMemberValue(team.GetAllTeams(), "Name") do
+		
+			local tobanj = unbanjob:AddOption( value.Name, function()	
+				RunConsoleCommand("cat_unbanjob", tostring(victim), jobk)		
+				rightadminmenu:Hide()
+			end)
+			
+		end
+		
+		-- set name
+		local tosetn = setn:AddOption( v:Nick(), function()
+			Derma_StringRequest( 
+				"Set RP Name", 
+				"What do you want to set "..victimname.."'s name to?",
+				"",
+				function( text )
+					RunConsoleCommand("cat_setname", tostring(victim), tostring(text))
+				end,
+				function( text ) end)
+			rightadminmenu:Hide()
+		end)	
+		end
 	end
 
 end)

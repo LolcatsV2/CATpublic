@@ -9,6 +9,10 @@ function chattags(ply, strText, bTeamOnly, bPlayerIsDead)
 
 if cattagstatus == "false" then return end
 
+if (GAMEMODE.Name == "DarkRP") then
+	cat_jobcolor = ply:getJobTable()
+end
+
 	local green = Color(0, 209, 49)
 	local red = Color(209, 0, 0)
 	local blue = Color(0, 80, 209)
@@ -18,34 +22,33 @@ if cattagstatus == "false" then return end
 	local orange = Color(255, 100, 0)
 	local teal = Color(0, 255, 255)
 	local dgreen = Color(0, 90, 21)
+	local dblue = Color(0, 106, 109)
+	
+	
 	
 	
 	local usertitle = ""
 	local usercolor = ""
 	
-	if ply:GetNWString("CAT_Usergroup") == "owner" then
+	if (!IsValid(ply)) then
+		usertitle = "[CONSOLE] "
+		usercolor = blue
+	elseif (ply:GetUserGroup() == "superadmin") then
 		usertitle = "[Owner] "
 		usercolor = red
-	elseif ply:GetNWString("CAT_Usergroup") == "superadmin" then
-		usertitle = "[Superadmin] "
-		usercolor = teal
-	elseif ply:GetNWString("CAT_Usergroup") == "admin" then
-		usertitle = "[Admin] "
-		usercolor = orange
-	elseif ply:GetNWString("CAT_Usergroup") == "moderator" then
-		usertitle = "[Moderator] "
+	elseif (ply:GetUserGroup() == "admin") then
+		usertitle = "[Staff] "
 		usercolor = blue
-	elseif ply:GetNWString("CAT_Usergroup") == "vip" then
-		usertitle = "[V.I.P.] "
-		usercolor = green
-	elseif ply:GetNWString("CAT_Usergroup") == "user" then
+	else
 		usertitle = "[User] "
 		usercolor = dgreen
 	end
 	
-	
 	if not IsValid(ply) then
-		chat.AddText(blue, "Console: ", white, strText)
+		chat.AddText(blue, "CONSOLE: ", white, strText)
+		return true
+	elseif (GAMEMODE.Name == "DarkRP") then
+		chat.AddText(usercolor, usertitle, cat_jobcolor.color, ply:Nick(), white, ": ", strText)
 		return true
 	else
 		chat.AddText(usercolor, usertitle, yellow, ply:Nick(), white, ": ", strText)

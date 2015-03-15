@@ -3,17 +3,22 @@
 =======by Lolcats========
 =======================*/
 
-concommand.Add("cat_cleanuserprops", function( ply, command, arguments )
+local PLUGINNAME = "cprops"
+CAT_Commands[PLUGINNAME] = {}
+CAT_Commands[PLUGINNAME].command = "!cprops"
+CAT_Commands[PLUGINNAME].args = 1
+CAT_Commands[PLUGINNAME].help = "!cprops target"
+
+
+
+concommand.Add("cat_cprops", function( ply, command, arguments )
 	
 	if (!IsValid(ply)) then
 		ply = "Console"
 	end	
 	
-	local plycando = CAT_CanDoAction(ply, "cuprops")
+	local plycando = CAT_CanDoAction(ply, "cprops")
 		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
 	return end	
 		
 	local victim = CAT_FindPlayerUserID( arguments[1] )
@@ -29,5 +34,6 @@ concommand.Add("cat_cleanuserprops", function( ply, command, arguments )
 	CAT_LogAction(ply, "Cleaned up "..victim:Nick().."'s props.")
 	
 	cleanup.CC_Cleanup(victim, "", {})
-
+	
+	
 end)

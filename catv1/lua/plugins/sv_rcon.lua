@@ -11,12 +11,9 @@ concommand.Add("cat_rcon", function( ply, command, arguments )
 		
 	local plycando = CAT_CanDoAction(ply, "rcon")
 		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
 	return end
 	
-	catrcmd.ConsoleCommand(arguments[1].."\n")
+	game.ConsoleCommand(arguments[1].."\n")
 
 	CAT_LogActionServer(ply, "ran remote console command "..arguments[1]..".")
 	

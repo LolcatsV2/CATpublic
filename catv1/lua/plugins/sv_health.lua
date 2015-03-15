@@ -3,7 +3,13 @@
 =======by Lolcats========
 =======================*/
 
-concommand.Add("cat_hp", function( ply, command, arguments )
+local PLUGINNAME = "health"
+CAT_Commands[PLUGINNAME] = {}
+CAT_Commands[PLUGINNAME].command = "!health"
+CAT_Commands[PLUGINNAME].args = 2
+CAT_Commands[PLUGINNAME].help = "!health target amount"
+
+concommand.Add("cat_health", function( ply, command, arguments )
 	
 	if (!IsValid(ply)) then
 		ply = "Console"
@@ -11,9 +17,6 @@ concommand.Add("cat_hp", function( ply, command, arguments )
 	
 	local plycando = CAT_CanDoAction(ply, "health")
 		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
 	return end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )

@@ -3,6 +3,13 @@
 =======by Lolcats========
 =======================*/
 
+--No Chat Command for this.
+-- local PLUGINNAME = "cleardecals"
+-- CAT_Commands[PLUGINNAME] = {}
+-- CAT_Commands[PLUGINNAME].command = "!cleardecals"
+-- CAT_Commands[PLUGINNAME].args = 0
+-- CAT_Commands[PLUGINNAME].help = "!cleardecals"
+
 concommand.Add("cat_cleardecals", function( ply, command, arguments )
 		
 	if (!IsValid(ply)) then
@@ -11,9 +18,6 @@ concommand.Add("cat_cleardecals", function( ply, command, arguments )
 		
 	local plycando = CAT_CanDoAction(ply, "cleardecals")
 		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
 	return end
 	
 	for k,v in pairs(player.GetAll()) do

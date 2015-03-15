@@ -11,7 +11,6 @@ local motd_title = GetHostName()
 concommand.Add( "openmotd", function()
 	
 	if (cat_motd_enable) then
-	gui.EnableScreenClicker(true)
 		
 		local window = vgui.Create( "DFrame" )
 		window:ShowCloseButton(true)
@@ -23,15 +22,13 @@ concommand.Add( "openmotd", function()
 		end
 		window:Center()
 		window:SetTitle( motd_title )
-
-		--blahahahahahaha spacer goes here
-		
+		window:MakePopup()
+				
 		local html = vgui.Create( "HTML", window )
 		local AcceptButton = vgui.Create( "DButton", window )
 		AcceptButton:SetText( "Close" )
 		AcceptButton.DoClick = function()
 			window:Close() 
-			gui.EnableScreenClicker(false) -- Disable the mouse
 		end
 		AcceptButton:SetSize( 100, 40 )
 		AcceptButton:SetDisabled( false )
@@ -43,4 +40,7 @@ concommand.Add( "openmotd", function()
 
 		end
 	end)
+
+	
+
 	

@@ -6,122 +6,127 @@
 
 if (SERVER) then
 
-concommand.Add("cat_ragdoll", function( ply, command, arguments )
-		
-	if (!IsValid(ply)) then
-		ply = "Console"
-	end		
-		
-	local plycando = CAT_CanDoAction(ply, "ragdoll")
-		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
-	return end	
-		
-	local victim = CAT_FindPlayerUserID( arguments[1] )
-	
-		if (victim:IsBetterOrSame(ply)) then
+	local PLUGINNAME = "ragdoll"
+	CAT_Commands[PLUGINNAME] = {}
+	CAT_Commands[PLUGINNAME].command = "!ragdoll"
+	CAT_Commands[PLUGINNAME].args = 1
+	CAT_Commands[PLUGINNAME].help = "!ragdoll target"
+
+
+
+	concommand.Add("cat_ragdoll", function( ply, command, arguments )
 			
-			CAT_MessagePlayer(ply, "Access denied! \"" .. victim:Nick() .. "\" has same or better access than you.")
+		if (!IsValid(ply)) then
+			ply = "Console"
+		end		
 			
-			return
-		end
-	
-	
-	if (victim:GetNWBool("cat_isragdoll")) then
-	
-	if not victim:GetNWBool("cat_isragdoll") then
-		if victim:InVehicle() then
-			victim:ExitVehicle()
-			victim:GetParent():Remove()
-		end
+		local plycando = CAT_CanDoAction(ply, "ragdoll")
+			if plycando == false then
+		return end	
+			
+		local victim = CAT_FindPlayerUserID( arguments[1] )
 		
-		if victim:GetMoveType() == MOVETYPE_NOCLIP then
-			victim:SetMoveType( MOVETYPE_WALK )
-		end
-		
-		
-		victim:SetNWBool( "cat_isragdoll", true )
-		victim:StripWeapons()
-		victim:DrawViewModel( false )
-		victim:DrawWorldModel( false )
-		victim:SetColor( 255, 255, 255, 0 )
-
-		cat_ragdoll = ents.Create( "prop_ragdoll" )
-		cat_ragdoll:SetPos( victim:GetPos() )
-		cat_ragdoll:SetModel( victim:GetModel() )
-		cat_ragdoll:SetAngles( victim:GetAngles() )
-		cat_ragdoll:Spawn()
-		cat_ragdoll:Activate()
-					
-		victim:Spectate( OBS_MODE_ROAMING )
-		victim:Freeze( true )
-		victim:SetNWEntity( "plyragdoll", cat_ragdoll )
-		
-		CAT_LogAction(ply, "Ragdolled "..victim:Nick()..".")
-		
-	else
-	
-		if cat_ragdoll:IsValid() then
-
-			cat_ragdoll:Remove()
-			victim:SetPos( cat_ragdoll:GetPos() + Vector( 0, 0, 50 ) )
-			victim:Spawn()			
-			victim:SetModel( cat_ragdoll:GetModel() )
-
-		else
-			if victim:GetNWBool( "cat_isragdoll" ) then
-				victim:Kill()
+			if (victim:IsBetterOrSame(ply)) then
+				
+				CAT_MessagePlayer(ply, "Access denied! \"" .. victim:Nick() .. "\" has same or better access than you.")
+				
+				return
 			end
-		end
 		
-		victim:SetNWBool( "cat_isragdoll", false )
-		victim:DrawViewModel( true )
-		victim:DrawWorldModel( true )
-		victim:SetColor( 255, 255, 255, 255 )
-		victim:Freeze( false )
 		
-		for k, v in pairs (CAT_Config.GiveRagWeps) do
-			victim:Give(v)
-		end
-	
-		CAT_LogAction(ply, "Unragdolled "..victim:Nick()..".")
-	
-	
-	end
+		if (victim:GetNWBool("cat_isragdoll")) then
+		
+		if not victim:GetNWBool("cat_isragdoll") then
+			if victim:InVehicle() then
+				victim:ExitVehicle()
+				victim:GetParent():Remove()
+			end
+			
+			if victim:GetMoveType() == MOVETYPE_NOCLIP then
+				victim:SetMoveType( MOVETYPE_WALK )
+			end
+			
+			
+			victim:SetNWBool( "cat_isragdoll", true )
+			victim:StripWeapons()
+			victim:DrawViewModel( false )
+			victim:DrawWorldModel( false )
+			victim:SetColor( 255, 255, 255, 0 )
 
-	else 
-	
-		if victim:InVehicle() then
-			victim:ExitVehicle()
-			victim:GetParent():Remove()
-		end
+			cat_ragdoll = ents.Create( "prop_ragdoll" )
+			cat_ragdoll:SetPos( victim:GetPos() )
+			cat_ragdoll:SetModel( victim:GetModel() )
+			cat_ragdoll:SetAngles( victim:GetAngles() )
+			cat_ragdoll:Spawn()
+			cat_ragdoll:Activate()
+						
+			victim:Spectate( OBS_MODE_ROAMING )
+			victim:Freeze( true )
+			victim:SetNWEntity( "plyragdoll", cat_ragdoll )
+			
+			CAT_LogAction(ply, "Ragdolled "..victim:Nick()..".")
+			
+		else
 		
-		if victim:GetMoveType() == MOVETYPE_NOCLIP then
-			victim:SetMoveType( MOVETYPE_WALK )
-		end
-		
-		victim:SetNWBool( "cat_isragdoll", true )
-		victim:StripWeapons()
-		victim:DrawViewModel( false )
-		victim:DrawWorldModel( false )
-		victim:SetColor( 255, 255, 255, 0 )
+			if cat_ragdoll:IsValid() then
 
-		cat_ragdoll = ents.Create( "prop_ragdoll" )
-		cat_ragdoll:SetPos( victim:GetPos() )
-		cat_ragdoll:SetModel( victim:GetModel() )
-		cat_ragdoll:SetAngles( victim:GetAngles() )
-		cat_ragdoll:Spawn()
-		cat_ragdoll:Activate()
-					
-		victim:Spectate( OBS_MODE_ROAMING )
-		victim:Freeze( true )
-		victim:SetNWEntity( "plyragdoll", cat_ragdoll )
+				cat_ragdoll:Remove()
+				victim:SetPos( cat_ragdoll:GetPos() + Vector( 0, 0, 50 ) )
+				victim:Spawn()			
+				victim:SetModel( cat_ragdoll:GetModel() )
+
+			else
+				if victim:GetNWBool( "cat_isragdoll" ) then
+					victim:Kill()
+				end
+			end
+			
+			victim:SetNWBool( "cat_isragdoll", false )
+			victim:DrawViewModel( true )
+			victim:DrawWorldModel( true )
+			victim:SetColor( 255, 255, 255, 255 )
+			victim:Freeze( false )
+			
+			for k, v in pairs (CAT_Config.GiveRagWeps) do
+				victim:Give(v)
+			end
 		
-		CAT_LogAction(ply, "Ragdolled "..victim:Nick()..".")
-	end
-end)
+			CAT_LogAction(ply, "Unragdolled "..victim:Nick()..".")
+		
+		
+		end
+
+		else 
+		
+			if victim:InVehicle() then
+				victim:ExitVehicle()
+				victim:GetParent():Remove()
+			end
+			
+			if victim:GetMoveType() == MOVETYPE_NOCLIP then
+				victim:SetMoveType( MOVETYPE_WALK )
+			end
+			
+			victim:SetNWBool( "cat_isragdoll", true )
+			victim:StripWeapons()
+			victim:DrawViewModel( false )
+			victim:DrawWorldModel( false )
+			victim:SetColor( 255, 255, 255, 0 )
+
+			cat_ragdoll = ents.Create( "prop_ragdoll" )
+			cat_ragdoll:SetPos( victim:GetPos() )
+			cat_ragdoll:SetModel( victim:GetModel() )
+			cat_ragdoll:SetAngles( victim:GetAngles() )
+			cat_ragdoll:Spawn()
+			cat_ragdoll:Activate()
+						
+			victim:Spectate( OBS_MODE_ROAMING )
+			victim:Freeze( true )
+			victim:SetNWEntity( "plyragdoll", cat_ragdoll )
+			
+			CAT_LogAction(ply, "Ragdolled "..victim:Nick()..".")
+		end
+	end)
 
 	
 	function RemoveRagdollOnDisconnect( ply )

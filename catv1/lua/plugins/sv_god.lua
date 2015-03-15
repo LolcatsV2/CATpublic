@@ -3,6 +3,12 @@
 =======by Lolcats========
 =======================*/
 
+local PLUGINNAME = "god"
+CAT_Commands[PLUGINNAME] = {}
+CAT_Commands[PLUGINNAME].command = "!god"
+CAT_Commands[PLUGINNAME].args = 1
+CAT_Commands[PLUGINNAME].help = "!god target"
+
 concommand.Add("cat_god", function( ply, command, arguments )
 	
 	if (!IsValid(ply)) then
@@ -11,9 +17,6 @@ concommand.Add("cat_god", function( ply, command, arguments )
 	
 	local plycando = CAT_CanDoAction(ply, "god")
 		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
 	return end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )

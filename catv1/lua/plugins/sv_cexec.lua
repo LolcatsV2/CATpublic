@@ -11,10 +11,7 @@ concommand.Add("cat_cexec", function( ply, command, arguments )
 	
 	local plycando = CAT_CanDoAction(ply, "cexec")
 		if plycando == false then
-	
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-	
-		return end
+	return end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )
 	local pcommand = arguments[2]

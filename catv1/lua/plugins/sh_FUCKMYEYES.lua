@@ -7,10 +7,14 @@
 
 if (SERVER) then 
 
+	local PLUGINNAME = "seizure"
+	CAT_Commands[PLUGINNAME] = {}
+	CAT_Commands[PLUGINNAME].command = "!seizure"
+	CAT_Commands[PLUGINNAME].args = 1
+	CAT_Commands[PLUGINNAME].help = "!seizure target"
 
 	
-	
-	concommand.Add("cat_seize", function( ply, command, arguments )
+	concommand.Add("cat_seizure", function( ply, command, arguments )
 
 	if (!IsValid(ply)) then
 		ply = "Console"
@@ -18,9 +22,6 @@ if (SERVER) then
 	
 		local plycando = CAT_CanDoAction(ply, "seizure")
 		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
 		return end	
 	
 

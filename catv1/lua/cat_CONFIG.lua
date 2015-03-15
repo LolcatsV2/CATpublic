@@ -4,9 +4,29 @@
 
 CAT_Config = CAT_Config or {}
 
+
+
+// CAT_Config.UseCATPP
+// Whether or not to use CAT Prop Protection. This is useful if you are running DarkRP or something that comes with a Prop Protection, or if you don't like my prop protection. Possible Values: true false. Default Value: true
+// Special note: Requires a server restart to take full effect.
+CAT_Config.UseCATPP = true
+
+// CAT_Config.AdminsTouchPlayerProps
+// Whether or not admins are allowed to touch other player's props (CATPP required). Possible Values: true false. Default Value: true
+// Special note: Requires a server restart to take full effect.
+CAT_Config.AdminsTouchPlayerProps = true
+
+// CAT_Config.AdminsTouchWorldProps
+// Whether or not admins are allowed to physgun/gravgun/toolgun world props (doors, map spawned stuff, entites, etc). (CATPP required) Possible Values: true false. Default Value: true
+CAT_Config.AdminsTouchWorldProps = true
+
+// CAT_Config.AntispamTime
+// How long to wait between spawning props before it triggers the antispam (CATPP required). Possible Values: any number in seconds. Default Value: 0.4
+CAT_Config.AntispamTime = 0.4
+
 // CAT_Config.UseCatTags
-// Whether or not to use my chat tags.
-// Special note: Requires a server restart or clients to rejoin to take effect.Possible values: true false. Default Value: false
+// Whether or not to use my chat tags. This doesn't work with a lot of custom chatboxes. Experiment! 
+// Special note: Requires a server restart or clients to rejoin to take effect. Possible values: true false. Default Value: false
 CAT_Config.UseCatTags = false
 
 // CAT_Config.UseCatMOTD
@@ -17,15 +37,17 @@ CAT_Config.UseCatMOTD = true
 // WThe link to be used when the MOTD opens. Possible values: Any string (I.E. "www.google.com"). Default Value: "www.google.com"
 CAT_Config.MOTDURL = "www.google.com"
 
+// CAT_Config.DisconCleanupTime
+// How long to wait until cleaning up disconnected players props (CATPP required). Possible values: any number in seconds. Default Value: 15
+CAT_Config.DisconCleanupTime = 15
+
 // CAT_Config.UserGroups
 // What usergroups to use. There is little support for custom usergroups, and you're probably going to have to ask me how to do it. Will be fixed in a later update.  Possible values: See example.
 // Special note: Requires a server restart to take full effect.
 CAT_Config.UserGroups = {
 "user",
-"vip",
-"moderator",
-"admin",
-"superadmin",
+"mod",
+"staff",
 "owner"
 }
 
@@ -42,16 +64,21 @@ CAT_Config.TellAdmins = true
 CAT_Config.TellAnonymous = false
 
 // CAT_Config.LogNoclip
-// Whether or not to log noclip actions to the console (I.E. PLAYER -> entered Noclip). Possible values: true false. Default value: false.
+// Whether or not to log noclip actions to the console (E.G. PLAYER -> entered Noclip). Possible values: true false. Default value: false.
 CAT_Config.LogNoclip = false
-
-// CAT_Config.EnableDumbass
-// Whether or not to enable the dumbass text filter (AKA fix grammar). Possible values: true false. Default value: false.
-CAT_Config.EnableDumbass = false
 
 // CAT_Config.GiveRagWeps
 // What weapons to give back to a player after being ragdolled. Possible values are any weapon type.
 CAT_Config.GiveRagWeps = {
+"weapon_physcannon",
+"weapon_physgun",
+"gmod_tool",
+"gmod_camera"
+}
+
+// CAT_Config.GiveAdminWeps
+// What weapons to give to admins on spawn.
+CAT_Config.GiveAdminWeps = {
 "weapon_physcannon",
 "weapon_physgun",
 "weapon_frag",
@@ -67,6 +94,7 @@ CAT_Config.GiveRagWeps = {
 "gmod_camera"
 }
 
+
 // CAT_Config.GimpMessages
 // What the gimp messages should be. Possible values: Any string.
 CAT_Config.GimpMessages = {
@@ -81,91 +109,41 @@ CAT_Config.GimpMessages = {
 // CAT_Config.userCan
 // What users are allowed to do. Possible values: See Example.
 // "isadmin" check for TellAdmins. Nothing else.
-CAT_Config.userCan = {"noclip"}
+CAT_Config.UserCan = {"noclip"}
 
-// CAT_Config.vipCan
-// What VIP users are allowed to do. Possible values: See above.
-CAT_Config.vipCan = {"noclip"}
-
-// CAT_Config.moderatorCan
-// What player moderators are allowed to do. Possible values: See above.
-CAT_Config.moderatorCan = {"blind",
-"isadmin",
-"seizure",
-"ragdoll",
-"armor",
+// CAT_Config.ModCan
+// What moderators are allowed to do. Possible values: See Example.
+// "isadmin" check for TellAdmins. Nothing else.
+CAT_Config.ModCan = {"kick",
 "ban",
-"pickupplayers",
-"bring",
-"cuprops",
-"stopsounds",
-"cleardecals",
-"cloak",
-"extinguish",
-"freeze",
-"god",
-"health",
-"noclip",
-"ignite",
-"kick",
-"goto",
-"slay",
-"uncloak",
-"unfreeze",
-"ungod"
-}
-
-// CAT_Config.adminCan
-// What admins are allowed to do. Possible values: See above.
-CAT_Config.adminCan = {"blind",
 "isadmin",
-"seizure",
-"ragdoll",
-"armor",
-"ban",
-"setspeed",
-"bring",
-"cuprops",
 "pickupplayers",
-"cleardecals",
-"bomb",
-"cloak",
-"extinguish",
-"freeze",
-"stopsounds",
-"god",
-"health",
 "noclip",
-"ignite",
-"kick",
 "goto",
-"slay",
-"uncloak",
-"unfreeze",
-"ungod"
-}
+"bring"}
 
-// CAT_Config.superadminCan
-// What superadmins are allowed to do. Possible values: See above.
-CAT_Config.superadminCan = {"blind",
+// CAT_Config.StaffCan
+// What Staff are allowed to do. Possible values: See above.
+CAT_Config.StaffCan = {"blind",
+"pickupplayers",
 "isadmin",
 "seizure",
 "rcon",
-"bomb",
 "ragdoll",
 "rocket",
 "setspeed",
+"firework",
 "stopsounds",
 "give",
 "gimp",
 "armor",
-"pickupplayers",
+"enabledevmode",
 "ban",
 "cleanserver",
 "goto",
 "bring",
 "voicemute",
-"cuprops",
+"cprops",
 "cleardecals",
 "mute",
 "cloak",
@@ -174,8 +152,9 @@ CAT_Config.superadminCan = {"blind",
 "freeze",
 "god",
 "train",
-"health",
+"sethealth",
 "noclip",
+"bomb",
 "changemap",
 "strip",
 "ignite",
@@ -184,34 +163,39 @@ CAT_Config.superadminCan = {"blind",
 "slay",
 "uncloak",
 "unfreeze",
-"ungod",
-"screencap",
-"setaccess"
+"ungod"
 }
 
 // CAT_Config.ownerCan
 // What Owners are allowed to do. Possible values: See above.
-CAT_Config.ownerCan = {"blind",
+CAT_Config.OwnerCan = {"blind",
+"pickupplayers",
+"unban",
 "isadmin",
 "seizure",
 "rcon",
 "ragdoll",
 "rocket",
 "setspeed",
+"firework",
 "stopsounds",
 "give",
 "gimp",
 "armor",
+"enabledevmode",
 "ban",
 "cleanserver",
-"unban",
-"pickupplayers",
 "goto",
 "bring",
 "voicemute",
-"cuprops",
+"cprops",
 "cleardecals",
 "mute",
+"setname",
+"setmoney",
+"setjob",
+"banjob",
+"unbanjob",
 "cloak",
 "slap",
 "extinguish",
@@ -220,18 +204,21 @@ CAT_Config.ownerCan = {"blind",
 "train",
 "health",
 "noclip",
+"observerban",
+"bomb",
 "changemap",
 "strip",
 "ignite",
 "kick",
-"bomb",
 "cexec",
 "slay",
 "uncloak",
 "unfreeze",
 "ungod",
 "screencap",
-"setaccess"
+"setaccess",
+"panic",
+"uberpanic"
 }
 
 

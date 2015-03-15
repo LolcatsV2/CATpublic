@@ -1,4 +1,14 @@
+
 if (SERVER) then 
+
+	local PLUGINNAME = "blind"
+	CAT_Commands[PLUGINNAME] = {}
+	CAT_Commands[PLUGINNAME].command = "!blind"
+	CAT_Commands[PLUGINNAME].args = 2
+	CAT_Commands[PLUGINNAME].help = "!blind target"
+
+
+	
 	concommand.Add("cat_blind", function( ply, command, arguments )
 
 	local victim = CAT_FindPlayerUserID( arguments[1] )
@@ -11,9 +21,6 @@ if (SERVER) then
 	
 	local plycando = CAT_CanDoAction(ply, "blind")
 		if plycando == false then
-		
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
-		
 	return end		
 		
 	if (victim:IsBetterOrSame(ply)) then
@@ -73,9 +80,13 @@ if (CLIENT) then
 	off[ "$pp_colour_mulr" ] = 0
 	off[ "$pp_colour_mulg" ] = 0
 	off[ "$pp_colour_mulb" ] = 0 
-
+	
+	
+	
+	
 	if (ply:GetNWBool("cat_isblind") == true) then
 		DrawColorModify( on )
+		
 	else
 		DrawColorModify( off )
 	end

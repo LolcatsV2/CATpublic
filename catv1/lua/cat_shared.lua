@@ -1,4 +1,5 @@
--- Thanks @Mors Quaedam for this.
+CAT_Commands = {}
+
 if SERVER then
         util.AddNetworkString( "CAT_ColorMsg" )
         function CAT_BroadcastMsg(...)
@@ -6,6 +7,7 @@ if SERVER then
                 net.Start("CAT_ColorMsg")
                 net.WriteTable(args)
                 net.Broadcast()
+				CAT_WriteToLog(args)				
         end
  
         function CAT_PlayerMsg(...)
@@ -15,6 +17,7 @@ if SERVER then
                 net.Start("CAT_ColorMsg")
                 net.WriteTable(args)
                 net.Send(ply)
+
         end
 elseif CLIENT then
         net.Receive("CAT_ColorMsg",function(len)
