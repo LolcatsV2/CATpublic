@@ -88,9 +88,10 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 	rightadminmenu:AddSpacer()	
 	
 	
-	if (string.lower(engine.ActiveGamemode()) == "darkrp") then
+	local rpcmds
+	if (string.lower(GAMEMODE.Name) == "darkrp") then
 		-- "DarkRP" Commands submenu
-		local rpcmds, pnl = rightadminmenu:AddSubMenu( "DarkRP Actions" )
+		rpcmds, pnl = rightadminmenu:AddSubMenu( "DarkRP Actions" )
 		rpcmds:SetMinimumWidth(200)
 		rpcmds.Paint = function()
 			draw.RoundedBoxEx( 6, 0, 0, rpcmds:GetMinimumWidth(), rpcmds:GetMaxHeight(), Color(255,255,255,255), false, false, false, false)
@@ -660,10 +661,18 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 	pnl:SetIcon("icon16/arrow_right.png")
 	
 	// DarkRP Commands //	
-	if (string.lower(engine.ActiveGamemode()) == "darkrp") then
-
+	local setm
+	local setj
+	local banj
+	local unbanj
+	local setn
+	
+	if (string.lower(GAMEMODE.Name) == "darkrp") then
+	
+		print'DARKRP'
+	
 		-- Set Money menu
-		local setm, pnl = rpcmds:AddSubMenu( "Set Money" )
+		setm, pnl = rpcmds:AddSubMenu( "Set Money" )
 		setm:SetMinimumWidth(200)
 		setm.Paint = function()
 			draw.RoundedBoxEx( 6, 0, 0, setm:GetMinimumWidth(), setm:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
@@ -671,7 +680,7 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 		pnl:SetIcon("icon16/money.png")	
 		
 		-- Set Job menu
-		local setj, pnl = rpcmds:AddSubMenu( "Set Job" )
+		setj, pnl = rpcmds:AddSubMenu( "Set Job" )
 		setj:SetMinimumWidth(200)
 		setj.Paint = function()
 			draw.RoundedBoxEx( 6, 0, 0, setj:GetMinimumWidth(), setj:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
@@ -679,7 +688,7 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 		pnl:SetIcon("icon16/user_go.png")		
 
 		-- Ban Job menu
-		local banj, pnl = rpcmds:AddSubMenu( "Ban from Job" )
+		banj, pnl = rpcmds:AddSubMenu( "Ban from Job" )
 		banj:SetMinimumWidth(200)
 		banj.Paint = function()
 			draw.RoundedBoxEx( 6, 0, 0, banj:GetMinimumWidth(), banj:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
@@ -687,7 +696,7 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 		pnl:SetIcon("icon16/user_delete.png")		
 
 		-- Unban Job menu
-		local unbanj, pnl = rpcmds:AddSubMenu( "Unban from Job" )
+		unbanj, pnl = rpcmds:AddSubMenu( "Unban from Job" )
 		unbanj:SetMinimumWidth(200)
 		unbanj.Paint = function()
 			draw.RoundedBoxEx( 6, 0, 0, unbanj:GetMinimumWidth(), unbanj:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
@@ -695,7 +704,7 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 		pnl:SetIcon("icon16/user_add.png")
 		
 		-- Set Name menu
-		local setn, pnl = rpcmds:AddSubMenu( "Set Name" )
+		setn, pnl = rpcmds:AddSubMenu( "Set Name" )
 		setn:SetMinimumWidth(200)
 		setn.Paint = function()
 			draw.RoundedBoxEx( 6, 0, 0, setn:GetMinimumWidth(), setn:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
@@ -786,12 +795,6 @@ for k, v in pairs (player.GetAll()) do
 			function( text ) end)
 		rightadminmenu:Hide()
 	end)
-	
-	-- isnt cheater props
-	local toicheat = icheat:AddOption( v:Nick(), function()
-		RunConsoleCommand("cat_isntcheater", tostring(victim))
-		rightadminmenu:Hide()
-	end)	
 	
 	-- Set Access submenu
 	local saccsub = Sacc:AddSubMenu( v:Nick() )
@@ -1014,9 +1017,15 @@ for k, v in pairs (player.GetAll()) do
 		rightadminmenu:Hide()
 	end)
 	
+	local tosetm
+	local setjob
+	local banjob
+	local unbanjob
+	local tosetn
+	
 	if (string.lower(engine.ActiveGamemode()) == "darkrp") then
 		-- set money
-		local tosetm = setm:AddOption( v:Nick(), function()
+		tosetm = setm:AddOption( v:Nick(), function()
 			Derma_StringRequest( 
 				"Set Money", 
 				"How much do you want to set "..victimname.."'s wallet to?",
@@ -1029,7 +1038,7 @@ for k, v in pairs (player.GetAll()) do
 		end)	
 		
 		-- Set Job subsubmenu
-		local setjob = setj:AddSubMenu( v:Nick() )
+		setjob = setj:AddSubMenu( v:Nick() )
 		setjob:SetMinimumWidth(200)
 		setjob.Paint = function()
 			draw.RoundedBoxEx( 6, 0, 0, setjob:GetMinimumWidth(), setjob:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
@@ -1046,7 +1055,7 @@ for k, v in pairs (player.GetAll()) do
 		end
 
 		-- Ban Job subsubmenu
-		local banjob = banj:AddSubMenu( v:Nick() )
+		banjob = banj:AddSubMenu( v:Nick() )
 		banjob:SetMinimumWidth(200)
 		banjob.Paint = function()
 			draw.RoundedBoxEx( 6, 0, 0, banjob:GetMinimumWidth(), banjob:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
@@ -1070,7 +1079,7 @@ for k, v in pairs (player.GetAll()) do
 		end
 
 		-- Unban Job subsubmenu
-		local unbanjob = unbanj:AddSubMenu( v:Nick() )
+		unbanjob = unbanj:AddSubMenu( v:Nick() )
 		unbanjob:SetMinimumWidth(200)
 		unbanjob.Paint = function()
 			draw.RoundedBoxEx( 6, 0, 0, unbanjob:GetMinimumWidth(), unbanjob:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
@@ -1087,7 +1096,7 @@ for k, v in pairs (player.GetAll()) do
 		end
 		
 		-- set name
-		local tosetn = setn:AddOption( v:Nick(), function()
+		tosetn = setn:AddOption( v:Nick(), function()
 			Derma_StringRequest( 
 				"Set RP Name", 
 				"What do you want to set "..victimname.."'s name to?",
