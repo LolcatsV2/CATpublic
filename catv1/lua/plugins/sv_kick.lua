@@ -11,7 +11,7 @@ concommand.Add("cat_kick", function( ply, command, arguments )
 	local plycando = CAT_CanDoAction(ply, "kick")
 		if plycando == false then
 
-		CAT_MessagePlayer(ply, "Access denied! You don't have permission to use that command.")
+		CAT_PlayerMsg(ply, "Access denied! You don't have permission to use that command.")
 
 	return end	
 
@@ -19,7 +19,7 @@ concommand.Add("cat_kick", function( ply, command, arguments )
 
 		if (victim:IsBetterOrSame(ply)) then
 
-			CAT_MessagePlayer(ply, "Access denied! \"" .. victim:Nick() .. "\" has same or better access than you.")
+			CAT_PlayerMsg(ply, "Access denied! \"" .. victim:Nick() .. "\" has same or better access than you.")
 
 			return
 		end

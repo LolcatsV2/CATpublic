@@ -30,7 +30,7 @@ concommand.Add("cat_changemap", function( ply, command, arguments )
 			RunConsoleCommand("changelevel", tomap)
 		end)
 	else
-	CAT_MessagePlayer(ply, "Error! \""..tomap.."\" isn't a valid map!")
+	CAT_PlayerMsg(ply, "Error! \""..tomap.."\" isn't a valid map!")
 	end
 
 end)

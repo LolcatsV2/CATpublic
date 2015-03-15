@@ -27,13 +27,13 @@ return end
 	
 if (victim:IsBetterOrSame(ply)) then
 		
-	CAT_MessagePlayer(ply, "Access denied! \"" .. victim:Nick() .. "\" has same or better access than you.")
+	CAT_PlayerMsg(ply, "Access denied! \"" .. victim:Nick() .. "\" has same or better access than you.")
 		
 	return
 end
 
 if (tonumber(arguments[2]) == nil) then 
-	CAT_MessagePlayer(ply, "You didn't specify a real number. Try again")
+	CAT_PlayerMsg(ply, "You didn't specify a real number. Try again")
 	return
 end
 

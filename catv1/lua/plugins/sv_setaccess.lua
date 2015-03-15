@@ -24,12 +24,12 @@ concommand.Add("cat_setaccess", function( ply, command, arguments )
 
 	local plycando = CAT_CanDoAction(ply, "setaccess")
 	if plycando == false then
-		CAT_MessagePlayer(ply, "Access denied! You don't have the right permissions!")
+		CAT_PlayerMsg(ply, "Access denied! You don't have the right permissions!")
 	return end
 
 	if (victim:IsBetterOrSame(ply)) then
 
-		CAT_MessagePlayer(ply, "Access denied! \"" .. victim:Nick() .. "\" has same or better access than you.")
+		CAT_PlayerMsg(ply, "Access denied! \"" .. victim:Nick() .. "\" has same or better access than you.")
 
 	return end
 

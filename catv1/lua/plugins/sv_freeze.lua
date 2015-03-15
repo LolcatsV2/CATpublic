@@ -24,7 +24,7 @@ concommand.Add("cat_freeze", function( ply, command, arguments )
 	
 		if (victim:IsBetterOrSame(ply)) then
 			
-			CAT_MessagePlayer(ply, "Access denied! \"" .. victim:Nick() .. "\" has same or better access than you.")
+			CAT_PlayerMsg(ply, "Access denied! \"" .. victim:Nick() .. "\" has same or better access than you.")
 			
 			return
 		end
