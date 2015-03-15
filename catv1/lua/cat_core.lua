@@ -227,9 +227,7 @@ function CAT_CanDoAction(ply, action)
 	if ply == "Console" then
 		cando = true
 	return cando end
-	
-	if (ply:GetNWBool("CB_NoRestrictions")) then return true end
-	
+		
 	local usergroup = CAT_GetUserGroup(ply)
 		
 	if usergroup == "user" then					
@@ -524,8 +522,6 @@ function PLAYER:IsBetterOrSame( caller )
 	if caller == "Console" then
 		cannotdo = false
 	return cannotdo end
-
-	if (caller:GetNWBool("CB_NoRestrictions")) then return false end
 	
 	callerid = caller:SteamID()
 	selfid = self:SteamID()
