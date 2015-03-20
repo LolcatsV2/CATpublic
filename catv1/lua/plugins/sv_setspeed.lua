@@ -16,8 +16,10 @@ concommand.Add("cat_setspeed", function( ply, command, arguments )
 	end			
 	
 	local plycando = CAT_CanDoAction(ply, "setspeed")
-		if plycando == false then
-	return end
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )
 	local tospeed = tonumber(arguments[2])
@@ -32,6 +34,6 @@ concommand.Add("cat_setspeed", function( ply, command, arguments )
 	victim:SetRunSpeed(tospeed*2)
 	victim:SetWalkSpeed(tospeed)
 	
-	CAT_LogAction(ply, "set "..victim:Nick().."'s speed to "..tostring(tospeed)..".")
+	CAT_LogAction(ply, "Set "..victim:Nick().."'s speed to "..tostring(tospeed)..".")
 
 end)

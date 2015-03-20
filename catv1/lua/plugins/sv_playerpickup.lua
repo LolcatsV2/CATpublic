@@ -8,8 +8,9 @@ local function Playerpickup(ply, ent)
 	if (!ent:IsPlayer()) then return end
 	
 	local plycando = CAT_CanDoAction(ply, "pickupplayers")
-		if plycando == false then
-	return false end
+	if plycando == false then
+		return false
+	end
 	
 
 	

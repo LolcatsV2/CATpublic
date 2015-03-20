@@ -83,11 +83,7 @@ surface.CreateFont( "cat_clpp", {
 
 
 --We should make a neat Q menu thing for this, right?
---...
---...
---...
---Right.
-hook.Add( "AddToolMenuTabs", "myHookClass", function()
+hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 
 	if totalppstatus == "false" then return end
 

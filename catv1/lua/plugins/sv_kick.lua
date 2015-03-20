@@ -2,18 +2,25 @@
 ===Kick module,created===
 =======by Lolcats========
 =======================*/
+
+local PLUGINNAME = "kick"
+CAT_Commands[PLUGINNAME] = {}
+CAT_Commands[PLUGINNAME].command = "!kick"
+CAT_Commands[PLUGINNAME].args = math.huge 			-- fuck it
+CAT_Commands[PLUGINNAME].help = "!kick target reason"
+
 concommand.Add("cat_kick", function( ply, command, arguments )
+
 
 	if (!IsValid(ply)) then
 		ply = "Console"
 	end			
 
 	local plycando = CAT_CanDoAction(ply, "kick")
-		if plycando == false then
-
-		CAT_PlayerMsg(ply, "Access denied! You don't have permission to use that command.")
-
-	return end	
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 
 	local victim = CAT_FindPlayerUserID( arguments[1] )
 

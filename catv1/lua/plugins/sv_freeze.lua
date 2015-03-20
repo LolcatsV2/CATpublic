@@ -16,8 +16,10 @@ concommand.Add("cat_freeze", function( ply, command, arguments )
 	end			
 	
 	local plycando = CAT_CanDoAction(ply, "freeze")
-		if plycando == false then
-	return end
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )
 	local freezetime = tonumber(arguments[2])

@@ -31,8 +31,10 @@ if (SERVER) then
 		end		
 			
 		local plycando = CAT_CanDoAction(ply, "observerban")
-			if plycando == false then
-		return end
+		if plycando == false then
+			CAT_PlayerMsg(ply, "Access denied! You don't have permission to use that command.")
+			return
+		end
 		
 		local victim = CAT_FindPlayerUserID( arguments[1] )
 		local time = arguments[2]
@@ -67,8 +69,6 @@ if (SERVER) then
 			victim:SetRunSpeed(140)
 			victim:DrawShadow(false)		
 			victim:SetAvoidPlayers(false)
-			victim:Give("hands")
-			victim:SetActiveWeapon("hands")
 			
 			CAT_LogAction(ply, "Observer Banned "..victim:Nick().." for "..time.." seconds.")
 			
@@ -109,7 +109,6 @@ if (SERVER) then
 		else
 			client:SetColor(Color(255, 255, 255, 255))
 			client:DrawShadow(true)
-			client:Give("hands")
 
 		end
 	end)

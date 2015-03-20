@@ -16,8 +16,10 @@ concommand.Add("cat_slap", function( ply, command, arguments )
 	end			
 	
 	local plycando = CAT_CanDoAction(ply, "slap")
-		if plycando == false then
-	return end
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You don't have permission to use that command.")
+		return
+	end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )
 	local times = tonumber(arguments[2])

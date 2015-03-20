@@ -1,6 +1,6 @@
 "AddonInfo"
 {
-	"name" "CAT Public Release V.1"
+	"name" "CAT Public Release V.1.2"
 	"author_name" "Lolcats (STEAM_0:1:26479445)"
 	"info" " { 	"description": "A simple administration mod.", 	"type": "gamemode", 	"tags":  	[ 		"realism", 		"roleplay" 	] }"
 }

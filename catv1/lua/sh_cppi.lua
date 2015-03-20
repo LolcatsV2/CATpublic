@@ -78,11 +78,11 @@ if SERVER then
 		return CAT_BlockGravGun(ply, self)
 	end
 
-	function ENTITY:CPPICanUse(ply)
+	function ENTITY:CPPICanUse(ply)								// Just annoying for players
 		return CPPI.CPPI_NOTIMPLEMENTED
 	end
 
-	function ENTITY:CPPICanDamage(ply)
+	function ENTITY:CPPICanDamage(ply)							// Just annoying for players
 		return CPPI.CPPI_NOTIMPLEMENTED
 	end
 
@@ -94,7 +94,7 @@ if SERVER then
 		return CAT_BlockPropertyList(ply, self)
 	end
 
-	function ENTITY:CPPICanEditVariable(ply, key, val, editTbl)
+	function ENTITY:CPPICanEditVariable(ply, key, val, editTbl) // What/Why?
 		return CPPI.CPPI_NOTIMPLEMENTED
 	end
 end

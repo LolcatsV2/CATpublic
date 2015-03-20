@@ -24,8 +24,9 @@ concommand.Add("cat_setaccess", function( ply, command, arguments )
 
 	local plycando = CAT_CanDoAction(ply, "setaccess")
 	if plycando == false then
-		CAT_PlayerMsg(ply, "Access denied! You don't have the right permissions!")
-	return end
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 
 	if (victim:IsBetterOrSame(ply)) then
 

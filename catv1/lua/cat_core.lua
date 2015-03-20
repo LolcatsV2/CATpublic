@@ -15,8 +15,6 @@ for k, v in pairs (CAT_Config.UserGroups) do
 	end
 end
 
-	
-	
 function CAT_FindPlayerUserID( userID )
 
 	local UID = tonumber(userID)
@@ -71,16 +69,15 @@ function CAT_LogActionServer( CALLER, ACTION )
 	
 end
 
-
-
 function CAT_LogAction( CALLER, ACTION )	
 
-if CALLER == "Console" then
-	MsgC(Color(0, 200, 200), "Console -> "..ACTION.."\n")
-	CAT_TellAll(CALLER, ACTION)
-	
-	CAT_WriteToLog("[CAT] "..CALLER.." -> "..ACTION)	
-return end
+	if CALLER == "Console" then
+		MsgC(Color(0, 200, 200), "Console -> "..ACTION.."\n")
+		CAT_TellAll(CALLER, ACTION)
+		
+		CAT_WriteToLog("[CAT] "..CALLER.." -> "..ACTION)	
+		return
+	end
 	
 	Msg( CALLER:Nick().." -> "..ACTION.."\n")
 
@@ -90,15 +87,6 @@ return end
 	
 end
 
-function CAT_FindPlayer( uniqueID )
-
-	if (!uniqueID) then return nil end
-
-	local pl = player.GetByUniqueID(uniqueID)
-	
-	return pl
-
-end
 
 -- Code from ASSMod, which got this code from Megiddo from ULX. Thanks <3
 function CAT_playerSend( from, to, force )
@@ -160,7 +148,7 @@ function CAT_SetUserGroup(victim, togroup, caller)
 			victim:SetUserGroup("admin")
 		elseif (togroup == "mod") then
 			victim:SetUserGroup("mod")
-		else
+		elseif (togroup == "user") then
 			victim:SetUserGroup("user")
 		end
 	return end
@@ -180,7 +168,7 @@ function CAT_SetUserGroup(victim, togroup, caller)
 			victim:SetUserGroup("admin")
 		elseif (togroup == "mod") then
 			victim:SetUserGroup("mod")
-		else
+		elseif (togroup == "user") then
 			victim:SetUserGroup("user")
 		end
 		
@@ -213,8 +201,6 @@ hook.Add("PlayerInitialSpawn", "catsendinitinfo", function(ply)
 			ply:SetUserGroup("admin")
 		elseif (usergroup == "mod") then
 			ply:SetUserGroup("mod")
-		else
-			ply:SetUserGroup("user")
 		end	
 	end)
 end)
@@ -278,7 +264,7 @@ function CAT_Ban(ply, vic, reason, time, vicname)
 
 		local fixedid = string.sub(vic, 11)
 		local unbanneddate = os.time() + time*60
-		local sid = vic -- For the sake of neatness.
+		local sid = vic
 		local brname = ply
 		local fixreason = string.gsub(reason, " ", "_")
 		local fixname = string.gsub(vicname, " ", "_")
@@ -314,11 +300,11 @@ function CAT_Ban(ply, vic, reason, time, vicname)
 			game.ConsoleCommand("banid "..time.." "..vic.." \n")
 
 		end
-	else -- Do a normal ban
+	else 	-- Do a normal ban
 
 		local fixedid = string.sub(vic:SteamID(), 11)
 		local unbanneddate = os.time() + time*60
-		local sid = vic:SteamID() -- For the sake of neatness.
+		local sid = vic:SteamID() 
 		local brname = ply:Nick()
 		local fixreason = string.gsub(reason, " ", "_")
 		local fixname = string.gsub(vic:Nick(), " ", "_")
@@ -410,6 +396,7 @@ timer.Create("CAT_DoBans", 5, 1, function()
 	end
 end)
 
+--Really this is just a backup. I don't even know if I should keep it here, but oh well.
 hook.Add("PlayerAuthed", "CAT_Gatekeeper", function(ply, stid, unid)
 
 	local files, direcs = file.Find("cat/bans/*.txt", "DATA")

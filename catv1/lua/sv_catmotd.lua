@@ -3,7 +3,7 @@ local function OpenMOTDAtSpawn( ply )
 	if (ply:IsAdmin()) then return end
 	ply:ConCommand( "openmotd" )
 end
-hook.Add( "PlayerInitialSpawn", "OpenMOTDAtSpawn", OpenMOTDAtSpawn )
+hook.Add( "PlayerInitialSpawn", "CAT_OpenMOTDAtSpawn", OpenMOTDAtSpawn )
 
 local function motdchatcommand(ply, text)
 	if (text == "!motd") then
@@ -11,7 +11,7 @@ local function motdchatcommand(ply, text)
 	end
 	
 end
-hook.Add("PlayerSay", "chatcommandmotd", motdchatcommand)
+hook.Add("PlayerSay", "CAT_ChatCommandMOTD", motdchatcommand)
 
 util.AddNetworkString( "motdstatus" )
 
@@ -21,4 +21,4 @@ net.Start("motdstatus")
 	net.WriteBit(CAT_Config.UseCatMOTD)
 net.Send(ply)
 end
-hook.Add("PlayerInitialSpawn", "sendmotdstatus", sendmotdstat)
+hook.Add("PlayerInitialSpawn", "CAT_SendMOTDStatus", sendmotdstat)

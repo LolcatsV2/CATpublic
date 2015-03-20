@@ -20,15 +20,6 @@ local allowed = {
 
 if (SERVER) then 
 
-	--No Chat Command for this.
-	-- local PLUGINNAME = "devmode"
-
-	-- CAT_Commands[PLUGINNAME] = {}
-	-- CAT_Commands[PLUGINNAME].command = "!devmode"
-	-- CAT_Commands[PLUGINNAME].args = 1
-	-- CAT_Commands[PLUGINNAME].help = "!devmode"
-
-
 	util.AddNetworkString("cat_enabledev")
 
 	concommand.Add("cat_devmode", function( ply, command, arguments )
@@ -38,8 +29,10 @@ if (SERVER) then
 		end		
 			
 		local plycando = CAT_CanDoAction(ply, "enabledevmode")
-			if plycando == false then
-		return end
+		if plycando == false then
+			CAT_PlayerMsg(ply, "Access denied! You don't have permission to use that command.")
+			return
+		end
 		
 		if cat_devenabled == "false" then
 			cat_devenabled = "true"

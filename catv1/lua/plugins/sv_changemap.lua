@@ -3,13 +3,6 @@
 =======by Lolcats========
 =======================*/
 
-local PLUGINNAME = "changemap"
-CAT_Commands[PLUGINNAME] = {}
-CAT_Commands[PLUGINNAME].command = "!changemap"
-CAT_Commands[PLUGINNAME].args = 2
-CAT_Commands[PLUGINNAME].help = "!changemap mapname"
-
-
 concommand.Add("cat_changemap", function( ply, command, arguments )
 	
 	if (!IsValid(ply)) then
@@ -17,8 +10,10 @@ concommand.Add("cat_changemap", function( ply, command, arguments )
 	end			
 	
 	local plycando = CAT_CanDoAction(ply, "changemap")
-		if plycando == false then
-	return end
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 	
 	local tomap = arguments[1]
 
@@ -30,7 +25,7 @@ concommand.Add("cat_changemap", function( ply, command, arguments )
 			RunConsoleCommand("changelevel", tomap)
 		end)
 	else
-	CAT_PlayerMsg(ply, "Error! \""..tomap.."\" isn't a valid map!")
+		CAT_PlayerMsg(ply, "Error! \""..tomap.."\" isn't a valid map!")
 	end
 
 end)

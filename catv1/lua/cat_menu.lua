@@ -421,7 +421,7 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 	end
 	pnl:SetIcon("icon16/delete.png")
 	
-	-- Expirimental Screenshot menu
+	--Screenshot menu
 	local sreecap, pnl = utilcmds:AddSubMenu( "Capture User's Screen" )
 	sreecap:SetMinimumWidth(200)
 	sreecap.Paint = function()
@@ -436,14 +436,6 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 		draw.RoundedBoxEx( 6, 0, 0, CExec:GetMinimumWidth(), CExec:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
 	end
 	pnl:SetIcon("icon16/application_xp.png")
-
-	-- isnt cheater menu
-	local icheat, pnl = utilcmds:AddSubMenu( "Flag as Non-Cheater" )
-	icheat:SetMinimumWidth(200)
-	icheat.Paint = function()
-		draw.RoundedBoxEx( 6, 0, 0, icheat:GetMinimumWidth(), icheat:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
-	end
-	pnl:SetIcon("icon16/flag_green.png")
 	
 	-- Set Access menu
 	local Sacc, pnl = utilcmds:AddSubMenu( "Set Access" )
@@ -472,7 +464,7 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 	end
 	pnl:SetIcon("icon16/anchor.png")
 	
-		-- Ignite menu
+	-- Ignite menu
 	local ignite, pnl = funcmds:AddSubMenu( "Ignite" )
 	ignite:SetMinimumWidth(200)
 	ignite.Paint = function()
@@ -600,6 +592,14 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 	end
 	pnl:SetIcon("icon16/star.png")
 	
+	-- Strip menu
+	local strip, pnl = funcmds:AddSubMenu( "Strip Weapons" )
+	strip:SetMinimumWidth(200)
+	strip.Paint = function()
+		draw.RoundedBoxEx( 6, 0, 0, strip:GetMinimumWidth(), strip:GetMaxHeight(), Color(255,255,255,255), false, false, false, false )
+	end
+	pnl:SetIcon("icon16/cut.png")	
+	
 	-- Set Speed menu
 	local givewep, pnl = funcmds:AddSubMenu( "Give Weapon" )
 	givewep:SetMinimumWidth(200)
@@ -668,9 +668,7 @@ concommand.Add("+CAT_menu", function(ply, command, arguments)
 	local setn
 	
 	if (string.lower(GAMEMODE.Name) == "darkrp") then
-	
-		print'DARKRP'
-	
+		
 		-- Set Money menu
 		setm, pnl = rpcmds:AddSubMenu( "Set Money" )
 		setm:SetMinimumWidth(200)
@@ -780,7 +778,7 @@ for k, v in pairs (player.GetAll()) do
 	
 	-- screen cap
 	local toscap = sreecap:AddOption( v:Nick(), function()
-		RunConsoleCommand("cat_EXPIRscreencap", tostring(victim))
+		RunConsoleCommand("cat_screencap", tostring(victim))
 		rightadminmenu:Hide()
 	end)
 	-- CEXEC
@@ -955,6 +953,12 @@ for k, v in pairs (player.GetAll()) do
 		RunConsoleCommand("cat_firework", tostring(victim))
 		rightadminmenu:Hide()
 	end)
+	
+	-- strip
+	local tostrip = strip:AddOption( v:Nick(), function()
+		RunConsoleCommand("cat_strip", tostring(victim))
+		rightadminmenu:Hide()
+	end)	
 	
 	-- give weapon
 	local toseize = givewep:AddOption( v:Nick(), function()

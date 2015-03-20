@@ -16,8 +16,10 @@ concommand.Add("cat_rocket", function( ply, command, arguments )
 	end			
 	
 	local plycando = CAT_CanDoAction(ply, "rocket")
-		if plycando == false then
-	return end
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 	
 	
 	
@@ -50,6 +52,6 @@ concommand.Add("cat_rocket", function( ply, command, arguments )
 					timer.Simple(0.1, function() victim:Kill() end)
 				end)
 			
-			CAT_LogAction(ply, " rocketed "..victim:Nick()..".")
+			CAT_LogAction(ply, "Rocketed "..victim:Nick()..".")
 	
 end)

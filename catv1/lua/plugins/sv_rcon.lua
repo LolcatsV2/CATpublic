@@ -10,8 +10,10 @@ concommand.Add("cat_rcon", function( ply, command, arguments )
 	return end				
 		
 	local plycando = CAT_CanDoAction(ply, "rcon")
-		if plycando == false then
-	return end
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 	
 	game.ConsoleCommand(arguments[1].."\n")
 

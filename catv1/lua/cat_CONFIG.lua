@@ -20,9 +20,18 @@ CAT_Config.AdminsTouchPlayerProps = true
 // Whether or not admins are allowed to physgun/gravgun/toolgun world props (doors, map spawned stuff, entites, etc). (CATPP required) Possible Values: true false. Default Value: true
 CAT_Config.AdminsTouchWorldProps = true
 
+// CAT_Config.DisconCleanupTime
+// How long to wait until cleaning up disconnected players props (CATPP required). Possible values: any number in seconds. Default Value: 15
+CAT_Config.DisconCleanupTime = 15
+
 // CAT_Config.AntispamTime
 // How long to wait between spawning props before it triggers the antispam (CATPP required). Possible Values: any number in seconds. Default Value: 0.4
 CAT_Config.AntispamTime = 0.4
+
+// CAT_Config.ShouldLogStuff
+// Whether or not you want CAT to log player's actions, like spawning props, ragdolls, entering noclip, spraying sprays, etc. THIS WILL BE AUTOMATICALLY DISABLED IF YOU HAVE DARKRP. Possible values: true false. Default Value: true
+// Special note: CAT Actions will always be logged (PLAYER -> Did something).
+CAT_Config.ShouldLogStuff = true
 
 // CAT_Config.UseCatTags
 // Whether or not to use my chat tags. This doesn't work with a lot of custom chatboxes. Experiment! 
@@ -37,13 +46,10 @@ CAT_Config.UseCatMOTD = true
 // WThe link to be used when the MOTD opens. Possible values: Any string (I.E. "www.google.com"). Default Value: "www.google.com"
 CAT_Config.MOTDURL = "www.google.com"
 
-// CAT_Config.DisconCleanupTime
-// How long to wait until cleaning up disconnected players props (CATPP required). Possible values: any number in seconds. Default Value: 15
-CAT_Config.DisconCleanupTime = 15
 
 // CAT_Config.UserGroups
 // What usergroups to use. There is little support for custom usergroups, and you're probably going to have to ask me how to do it. Will be fixed in a later update.  Possible values: See example.
-// Special note: Requires a server restart to take full effect.
+// Special note: Requires a server restart to take full effect. DON'T JUST PUT GROUPS IN HERE AND EXPECT THEM TO WORK (kinda).
 CAT_Config.UserGroups = {
 "user",
 "mod",
@@ -62,10 +68,6 @@ CAT_Config.TellAdmins = true
 // CAT_Config.TellAnonymous
 // Whether or not to broadcast admin actions anonymously. If CAT_Config.TellAdmins is true, then admins will see other admin actions regardless of this setting. Possible values: true false. Default value: false
 CAT_Config.TellAnonymous = false
-
-// CAT_Config.LogNoclip
-// Whether or not to log noclip actions to the console (E.G. PLAYER -> entered Noclip). Possible values: true false. Default value: false.
-CAT_Config.LogNoclip = false
 
 // CAT_Config.GiveRagWeps
 // What weapons to give back to a player after being ragdolled. Possible values are any weapon type.
@@ -106,7 +108,7 @@ CAT_Config.GimpMessages = {
 	"being gimpped is the greatest thing ive ever had done to me"
 }
 
-// CAT_Config.userCan
+// CAT_Config.UserCan
 // What users are allowed to do. Possible values: See Example.
 // "isadmin" check for TellAdmins. Nothing else.
 CAT_Config.UserCan = {"noclip"}
@@ -155,7 +157,6 @@ CAT_Config.StaffCan = {"blind",
 "sethealth",
 "noclip",
 "bomb",
-"changemap",
 "strip",
 "ignite",
 "kick",
@@ -166,7 +167,7 @@ CAT_Config.StaffCan = {"blind",
 "ungod"
 }
 
-// CAT_Config.ownerCan
+// CAT_Config.OwnerCan
 // What Owners are allowed to do. Possible values: See above.
 CAT_Config.OwnerCan = {"blind",
 "pickupplayers",

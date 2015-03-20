@@ -25,8 +25,10 @@ if (SERVER) then
 		
 		
 		local plycando = CAT_CanDoAction(ply, "blind")
-			if plycando == false then
-		return end		
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You don't have permission to use that command.")
+		return
+	end	
 			
 		if (victim:IsBetterOrSame(ply)) then
 				

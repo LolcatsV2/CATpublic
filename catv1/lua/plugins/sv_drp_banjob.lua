@@ -3,24 +3,19 @@
 =======by Lolcats========
 =======================*/
 
-// I dunno how to make this a chat command. Too bad ;v
-/*local PLUGINNAME = "banjob"
-CAT_Commands[PLUGINNAME] = {}
-CAT_Commands[PLUGINNAME].command = "!banjob"
-CAT_Commands[PLUGINNAME].args = 2
-CAT_Commands[PLUGINNAME].help = "!banjob target amount"
-*/
-
-
 concommand.Add("cat_banjob", function( ply, command, arguments )
+
+	if (string.lower(engine.ActiveGamemode()) != "darkrp") then return end
 	
 	if (!IsValid(ply)) then
 		ply = "Console"
 	end	
 	
 	local plycando = CAT_CanDoAction(ply, "banjob")
-		if plycando == false then
-	return end	
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )
 	

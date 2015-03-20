@@ -1,9 +1,7 @@
 /*=======================
-===qoonafelp[owqtnab[p===
-=======ei eaowqpk========
+=Seizure module, created=
+=======by Lolcats========
 =======================*/
-	
-
 
 if (SERVER) then 
 
@@ -22,7 +20,9 @@ if (SERVER) then
 	
 		local plycando = CAT_CanDoAction(ply, "seizure")
 		if plycando == false then
-		return end	
+			CAT_PlayerMsg(ply, "Access denied! You don't have permission to use that command.")
+			return
+		end	
 	
 
 		local victim = CAT_FindPlayerUserID( arguments[1] )

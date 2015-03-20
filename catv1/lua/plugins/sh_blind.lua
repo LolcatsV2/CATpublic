@@ -4,7 +4,7 @@ if (SERVER) then
 	local PLUGINNAME = "blind"
 	CAT_Commands[PLUGINNAME] = {}
 	CAT_Commands[PLUGINNAME].command = "!blind"
-	CAT_Commands[PLUGINNAME].args = 2
+	CAT_Commands[PLUGINNAME].args = 1
 	CAT_Commands[PLUGINNAME].help = "!blind target"
 
 
@@ -20,8 +20,10 @@ if (SERVER) then
 	
 	
 	local plycando = CAT_CanDoAction(ply, "blind")
-		if plycando == false then
-	return end		
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end		
 		
 	if (victim:IsBetterOrSame(ply)) then
 			

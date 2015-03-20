@@ -17,8 +17,10 @@ concommand.Add("cat_firework", function( ply, command, arguments )
 	end			
 	
 	local plycando = CAT_CanDoAction(ply, "firework")
-		if plycando == false then
-	return end
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )
 
@@ -30,13 +32,10 @@ concommand.Add("cat_firework", function( ply, command, arguments )
 	victim:EmitSound("misc/taps_03.wav", 100, 100)
 	victim:SetMoveType(MOVETYPE_WALK)
 	victim:StripWeapons()
-	victim:Give("hands")
-	victim:SelectWeapon("hands")
 	victim:Freeze(true)
 	
-	for k, v in pairs (ents.FindInSphere(victim:GetPos(), 600)) do
+	for k, v in pairs (ents.FindInSphere(victim:GetPos(), 500)) do
 		if (v:IsPlayer() and v != victim) then
-			v:ConCommand("say Rest in pepperoni m8.")
 			v:SendLua("timer.Simple(0,function() LocalPlayer():ConCommand('act salute') end)")
 		end
 	end

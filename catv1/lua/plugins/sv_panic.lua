@@ -3,13 +3,6 @@
 =======by Lolcats========
 =======================*/
 
-//Doesn't really need a chat command.
-/*local PLUGINNAME = "bring"
-CAT_Commands[PLUGINNAME] = {}
-CAT_Commands[PLUGINNAME].command = "!bring"
-CAT_Commands[PLUGINNAME].args = 1
-CAT_Commands[PLUGINNAME].help = "!bring target"*/
-
 concommand.Add("cat_panic", function( ply, command, arguments )
 	
 	if (!IsValid(ply)) then
@@ -17,8 +10,10 @@ concommand.Add("cat_panic", function( ply, command, arguments )
 	end	
 	
 	local plycando = CAT_CanDoAction(ply, "panic")
-		if plycando == false then
-	return end	
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 	
 	local frozenents = 0
 	
@@ -32,18 +27,14 @@ concommand.Add("cat_panic", function( ply, command, arguments )
             phys:Sleep()
             phys:EnableMotion(false)
 			frozenents = frozenents + 1
-			print(entity)
 		end
 	
-	--print(entity)
 		
     end
 	
 	CAT_LogAction(ply, "Enabled Panic Mode for the server. Freezing colliding props...")
 	
 	CAT_BroadcastMsg(Color(255, 0, 0), "[PANIC] ", Color(200, 200, 200), "Froze "..tostring(frozenents).." colliding props." )
-	
-	--CAT_LogAction(ply, "Set "..victim:Nick().."'s job to "..team.GetAllTeams()[ind].Name..".")
-	
+		
 	
 end)

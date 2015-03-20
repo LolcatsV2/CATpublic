@@ -16,8 +16,10 @@ concommand.Add("cat_uncloak", function( ply, command, arguments )
 	end			
 	
 	local plycando = CAT_CanDoAction(ply, "uncloak")
-		if plycando == false then
-	return end
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You don't have permission to use that command.")
+		return
+	end
 	
 	local victim = CAT_FindPlayerUserID( arguments[1] )
 	
@@ -28,13 +30,10 @@ concommand.Add("cat_uncloak", function( ply, command, arguments )
 			return
 		end
 	
-	victim:SetRenderMode( 0 )
-	victim:SetColor( 255, 255, 255, 255 )
-	victim:SetCollisionGroup( COLLISION_GROUP_PLAYER )
+	victim:SetNoDraw(false)
 				
 	for k, v in ipairs( victim:GetWeapons() ) do
 		v:SetRenderMode( 0 )
-		v:SetColor( 255, 255, 255, 255 )
 	end
 	
 	CAT_LogAction(ply, "Uncloaked "..victim:Nick()..".")

@@ -3,12 +3,6 @@
 =======by Lolcats========
 =======================*/
 
-local PLUGINNAME = "cleanserver"
-CAT_Commands[PLUGINNAME] = {}
-CAT_Commands[PLUGINNAME].command = "!cleanserver"
-CAT_Commands[PLUGINNAME].args = 0
-CAT_Commands[PLUGINNAME].help = "!cleanserver"
-
 concommand.Add("cat_serverclean", function( ply, command, arguments )
 		
 	if (!IsValid(ply)) then
@@ -16,8 +10,10 @@ concommand.Add("cat_serverclean", function( ply, command, arguments )
 	end			
 	
 	local plycando = CAT_CanDoAction(ply, "cleanserver")
-		if plycando == false then
-	return end
+	if plycando == false then
+		CAT_PlayerMsg(ply, "Access denied! You're not allowed to use that command.")
+		return 
+	end
 	
 	game.CleanUpMap(true, {})
 

@@ -1,17 +1,19 @@
 --Chat Tags cause we can.
 
+local cattagstatus = cattagstatus
+
 net.Receive("cattagsstatus", function(len)
 
 cattagstatus = net.ReadString()
 end)
 
-function chattags(ply, strText, bTeamOnly, bPlayerIsDead)
+local function chattags(ply, strText, bTeamOnly, bPlayerIsDead)
 
-if cattagstatus == "false" then return end
+	if cattagstatus == "false" then return end
 
-if (GAMEMODE.Name == "DarkRP") then
-	cat_jobcolor = ply:getJobTable()
-end
+	if (GAMEMODE.Name == "DarkRP") then
+		cat_jobcolor = ply:getJobTable()
+	end
 
 	local green = Color(0, 209, 49)
 	local red = Color(209, 0, 0)

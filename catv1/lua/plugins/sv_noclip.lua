@@ -9,13 +9,6 @@ local function plynoclipgo(ply, inorout)
 		if plycando == false then
 	return false end
 	
-	if (CAT_Config.LogNoclip) then 
-		if (inorout) then 
-			CAT_LogActionServer(ply, "entered noclip.")
-		else
-			CAT_LogActionServer(ply, "exited noclip.")
-		end
-	end
 	return true
 end
 
