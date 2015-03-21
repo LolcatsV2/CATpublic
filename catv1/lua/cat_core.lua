@@ -5,13 +5,13 @@ Mainly used for core functions
 if (!file.Exists("catusergroups", "DATA")) then 
 	MsgN("[[CAT]] Creating usergroups for the first time... [[CAT]]")
 	file.CreateDir("catusergroups")
+	file.CreateDir("cat")
+	file.CreateDir("cat/bans")	
 end
 	
 for k, v in pairs (CAT_Config.UserGroups) do
 	if (!file.Exists("catusergroups/"..v, "DATA")) then 
 		file.CreateDir("catusergroups/"..v)
-		file.CreateDir("cat")
-		file.CreateDir("cat/bans")
 	end
 end
 
