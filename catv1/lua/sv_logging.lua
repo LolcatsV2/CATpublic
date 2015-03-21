@@ -44,11 +44,6 @@ local function Broadcast_Live(what)
 
 end
 
--- DarkRP will handle everything for us (I hope).
-if (string.lower(engine.ActiveGamemode()) == "darkrp") then 
-	ShouldLogStuff = false
-end
-
 if (ShouldLogStuff) then
 	/*========================================
 	PlayerSpawnedSENT
