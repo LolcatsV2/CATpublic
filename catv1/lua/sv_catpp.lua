@@ -176,6 +176,16 @@ local function worlddoors(ply, ent)
 		v:SetNWString("FounderName", "World")
 		v.PlayerOwner = Entity(0)								// worldspawn
 	end
+
+	for k, v in pairs (ents.FindByClass("func_door_rotating")) do
+		v:SetNWString("FounderName", "World")
+		v.PlayerOwner = Entity(0)								// worldspawn
+	end
+	
+	for k, v in pairs (ents.FindByClass("prop_physics")) do
+		v:SetNWString("FounderName", "World")
+		v.PlayerOwner = Entity(0)								// worldspawn
+	end
 	
 end
 hook.Add("InitPostEntity", TAG.."_SetWorld", worlddoors)
