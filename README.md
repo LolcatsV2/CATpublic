@@ -8,9 +8,15 @@ I intended to make this because I personally find ULX cluttered. Place "catv1" i
 
 To open the admin menu, simply type bind g +cat_menu into console, then hold G.
 
+Documentation
+---
+https://sites.google.com/site/catboxdocumentation/cat
+
 Features
 ---
 * Standard Abilities(Slay, Rocket, Blind, Cloak, Kick, Ban, etc.)
+* Prop Protection
+* Observer Ban (Ban players, without kicking them out of the server).
 * Client Screen Capture
 * A pretty much unbreakable config.
 * An easy to use UI.
@@ -18,14 +24,11 @@ Features
 
 About Screen Capture
 ---
-I'm probably going to get a lot of flak for releasing a Screen Capture ability, mainly because it's considered an
-"invasion of privacy". Just be aware that using the Screen Capture ability, nobody can use it except for the Owner
-Usergroup (by default), and that it can only be accessed by going to the actual server directory, and getting the
-file from there. I figured this would give people enough solace about it.
+Finally changed it. Admins now get the screenshot directly after taking it. Welcome to the digital age folks.
 
 READ ME ABOUT THE CONFIG
 ---
 By default, the config is set up for a classic sandbox server. If you're running a DarkRP or something else that
 ISN'T SANDBOX, you're going to want to go into the config and change some stuff (such as not allowing users and
-vip to noclip). All of the possible "cando" options are listed in the "CAT_Config.ownerCan" table.
+vip to noclip). All of the possible "cando" options are listed in the "CAT_Config.OwnerCan" table.
 
