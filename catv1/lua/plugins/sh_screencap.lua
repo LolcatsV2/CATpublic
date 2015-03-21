@@ -15,6 +15,10 @@ if (SERVER) then
 	CAT_Commands[PLUGINNAME].command = "!screencap"
 	CAT_Commands[PLUGINNAME].args = 1
 	CAT_Commands[PLUGINNAME].help = "!screencap target"
+
+	if (!file.Exists("cat/scaps", "DATA")) then 
+		file.CreateDir("cat/scaps")
+	end
 	
 	concommand.Add("cat_screencap", function( ply, command, arguments )
 		
