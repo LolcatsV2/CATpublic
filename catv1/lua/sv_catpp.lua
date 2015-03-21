@@ -167,22 +167,7 @@ end)
 local function worlddoors(ply, ent)
 	if (!CAT_Config.UseCATPP) then return end
 	
-	for k, v in pairs (ents.FindByClass("prop_door_rotating")) do
-		v:SetNWString("FounderName", "World")
-		v.PlayerOwner = Entity(0)								// worldspawn
-	end
-	
-	for k, v in pairs (ents.FindByClass("func_door")) do
-		v:SetNWString("FounderName", "World")
-		v.PlayerOwner = Entity(0)								// worldspawn
-	end
-
-	for k, v in pairs (ents.FindByClass("func_door_rotating")) do
-		v:SetNWString("FounderName", "World")
-		v.PlayerOwner = Entity(0)								// worldspawn
-	end
-	
-	for k, v in pairs (ents.FindByClass("prop_physics")) do
+	for k, v in pairs (ents.GetAll()) do
 		v:SetNWString("FounderName", "World")
 		v.PlayerOwner = Entity(0)								// worldspawn
 	end
