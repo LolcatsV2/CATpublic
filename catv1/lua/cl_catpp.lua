@@ -65,7 +65,7 @@ hook.Add("HUDPaint", "createdock", CAT_ShowOwner)
 --Create our own font, cause we can.
 surface.CreateFont( "cat_clpp", {
 	font = "default",
-	size = 32,
+	size = 26,
 	weight = 600,
 	blursize = 0,
 	scanlines = 0,
@@ -95,37 +95,33 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 		panel:ClearControls()
 		
 		
-		--Backboard for everything
-		local backboard = vgui.Create( "DPanel", panel )
-		backboard:SetPos( 20, 25 )
-		backboard:SetSize( 360, 650 )		
+--Backboard for everything
+	local backboard = vgui.Create( "DPanel", panel )
+	backboard:SetPos( 20, 25 )
+	backboard:SetSize( 280, 650 )		
 
-		--A nice label.
-		local headthing = vgui.Create("DLabel", backboard)
-		headthing:SetFont("cat_clpp")
-		headthing:SetText("Prop Protection Buddies")
-		headthing:SetPos(30,10)
-		headthing:SetTextColor(Color(0,0,0))
-		headthing:SizeToContents()
-
-		--list
-		local buddylister = vgui.Create("DListView", backboard)
-		buddylister:SetPos(40, 75)
-		buddylister:SetSize(280, 200)
-		buddylister:SetMultiSelect( false )
-		buddylister:AddColumn( "Name" )
-
-		for k, v in pairs (CATPP_Buddies) do
-			buddylister:AddLine(v)
-		end
-
-		--add buddy button
-		local buddybutton = vgui.Create("DButton", backboard)
-		buddybutton:SetSize(280, 35)
-		buddybutton:SetPos(40, 300)
-		buddybutton:SetFont("Trebuchet24")
-		buddybutton:SetText("Add a Buddy")
-		buddybutton.DoClick = function()
+	--A nice label.
+	local headthing = vgui.Create("DLabel", backboard)
+	headthing:SetFont("cat_clpp")
+	headthing:SetText("Prop Protection Buddies")
+	headthing:SetPos(15,10)
+	headthing:SetTextColor(Color(0,0,0))
+	headthing:SizeToContents()
+	
+	--list
+	local buddylister = vgui.Create("DListView", backboard)
+	buddylister:SetPos(20, 75)
+	buddylister:SetSize(240, 200)
+	buddylister:SetMultiSelect( false )
+	buddylister:AddColumn( "Name" )
+	
+	--add buddy button
+	local buddybutton = vgui.Create("DButton", backboard)
+	buddybutton:SetSize(240, 35)
+	buddybutton:SetPos(20, 300)
+	buddybutton:SetFont("Trebuchet24")
+	buddybutton:SetText("Add a Buddy")
+	buddybutton.DoClick = function()
 
 			local listy = vgui.Create("DMenu")
 				listy:SetPos(gui.MouseX(), gui.MouseY())
@@ -145,8 +141,8 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 
 		--remove buddy button
 		local unbuddybutton = vgui.Create("DButton", backboard)
-		unbuddybutton:SetSize(280, 35)
-		unbuddybutton:SetPos(40, 370)
+		unbuddybutton:SetSize(240, 35)
+		unbuddybutton:SetPos(20, 370)
 		unbuddybutton:SetFont("Trebuchet24")
 		unbuddybutton:SetText("Remove a Buddy")
 		unbuddybutton.DoClick = function()
@@ -175,10 +171,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 	
 	spawnmenu.AddToolMenuOption( "cat", "catpp", "catppgeneral", "Settings", "", "", function( panel ) -- We need to populate the toolmenu with something!
 		panel:ClearControls()
-		
-		
-		local ply = LocalPlayer()
-		
+				
 		--Backboard for everything
 		local backboard = vgui.Create( "DPanel", panel )
 		backboard:SetPos( 20, 25 )
@@ -188,7 +181,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 		local headthing = vgui.Create("DLabel", backboard)
 		headthing:SetFont("cat_clpp")
 		headthing:SetText("General Settings")
-		headthing:SetPos(30,10)
+		headthing:SetPos(55,10)
 		headthing:SetTextColor(Color(0,0,255))
 		headthing:SizeToContents()
 		
@@ -207,7 +200,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 			else
 				draw.RoundedBox( 8, 0, 0, physppbut:GetWide(), physppbut:GetTall(), Color( 200, 0, 0, 125 ) )
 			end
-			draw.SimpleText( "Physgun Protection", "cat_clpp", 5, 10, Color(255,255,255,255) )
+			draw.SimpleText( "Physgun Protection", "cat_clpp", 27, 10, Color(255,255,255,255) )
 		end
 		
 		--Toolgun Prop Protection button.
@@ -225,7 +218,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 			else
 				draw.RoundedBox( 8, 0, 0, toolppbut:GetWide(), toolppbut:GetTall(), Color( 200, 0, 0, 125 ) )
 			end
-			draw.SimpleText( "Toolgun Protection", "cat_clpp", 8, 10, Color(255,255,255,255) )
+			draw.SimpleText( "Toolgun Protection", "cat_clpp", 30, 10, Color(255,255,255,255) )
 		end	
 		
 		--Gravgun Prop Protection button.
@@ -243,7 +236,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 			else
 				draw.RoundedBox( 8, 0, 0, gravppbut:GetWide(), gravppbut:GetTall(), Color( 200, 0, 0, 125 ) )
 			end
-			draw.SimpleText( "Gravgun Protection", "cat_clpp", 6, 10, Color(255,255,255,255) )
+			draw.SimpleText( "Gravgun Protection", "cat_clpp", 30, 10, Color(255,255,255,255) )
 		end			
 	end)
 	
