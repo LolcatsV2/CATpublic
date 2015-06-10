@@ -12,4 +12,5 @@ if (CLIENT) then
 	include("plugins/sh_voicemute.lua")
 	include("plugins/sh_observerban.lua")
 	include("cat_CONFIG.lua")
+	include("sh_cppi.lua")
 end
