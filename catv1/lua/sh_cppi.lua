@@ -36,13 +36,21 @@ end
 
 local PLAYER = FindMetaTable("Player")
 function PLAYER:CPPIGetFriends()
-	return CPPI.CPPI_NOTIMPLEMENTED
+	if SERVER then
+		return CATPP_Buddies[self:SteamID()]
+	else
+		return CATPP_Buddies
+	end
 end
 
 local ENTITY = FindMetaTable("Entity")
 function ENTITY:CPPIGetOwner()
 	if SERVER then
-		return self:GetPlayerOwner(), self:GetPlayerOwner():UniqueID()
+		if (self:GetPlayerOwner():IsWorld()) then
+			return self:GetPlayerOwner(), nil
+		else
+			return self:GetPlayerOwner(), self:GetPlayerOwner():UniqueID()
+		end
 	else
 		return CPPI:GetPlayerFromName(self:GetNWString("FounderName"))
 	end

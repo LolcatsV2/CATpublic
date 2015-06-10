@@ -65,7 +65,7 @@ hook.Add("HUDPaint", "createdock", CAT_ShowOwner)
 --Create our own font, cause we can.
 surface.CreateFont( "cat_clpp", {
 	font = "default",
-	size = 26,
+	size = 32,
 	weight = 600,
 	blursize = 0,
 	scanlines = 0,
@@ -80,48 +80,67 @@ surface.CreateFont( "cat_clpp", {
 	outline = false,
 } )
 
-
+surface.CreateFont( "cat_clpp_smaller", {
+	font = "default",
+	size = 24,
+	weight = 600,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = false,
+	additive = false,
+	outline = false,
+} )
 
 --We should make a neat Q menu thing for this, right?
 hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 
 	if totalppstatus == "false" then return end
 
-	spawnmenu.AddToolTab( "cat", "CAT", "icon16/book_key.png" ) -- Add a new tab
+	spawnmenu.AddToolTab( "cat", "CAT", "icon16/book_key.png" )
 
-	spawnmenu.AddToolCategory( "cat", "catpp", "CAT Prop Protection" ) -- Add a category into that new tab
+	spawnmenu.AddToolCategory( "cat", "catpp", "CAT Prop Protection" )
 
-	spawnmenu.AddToolMenuOption( "cat", "catpp", "catppbuddies", "Buddies", "", "", function( panel ) -- We need to populate the toolmenu with something!
+	spawnmenu.AddToolMenuOption( "cat", "catpp", "catppbuddies", "Buddies", "", "", function( panel ) 
 		panel:ClearControls()
 		
 		
---Backboard for everything
-	local backboard = vgui.Create( "DPanel", panel )
-	backboard:SetPos( 20, 25 )
-	backboard:SetSize( 280, 650 )		
+		--Backboard for everything
+		local backboard = vgui.Create( "DPanel", panel )
+		backboard:SetPos( 20, 25 )
+		backboard:SetSize( 280, 650 )		
 
-	--A nice label.
-	local headthing = vgui.Create("DLabel", backboard)
-	headthing:SetFont("cat_clpp")
-	headthing:SetText("Prop Protection Buddies")
-	headthing:SetPos(15,10)
-	headthing:SetTextColor(Color(0,0,0))
-	headthing:SizeToContents()
-	
-	--list
-	local buddylister = vgui.Create("DListView", backboard)
-	buddylister:SetPos(20, 75)
-	buddylister:SetSize(240, 200)
-	buddylister:SetMultiSelect( false )
-	buddylister:AddColumn( "Name" )
-	
-	--add buddy button
-	local buddybutton = vgui.Create("DButton", backboard)
-	buddybutton:SetSize(240, 35)
-	buddybutton:SetPos(20, 300)
-	buddybutton:SetFont("Trebuchet24")
-	buddybutton:SetText("Add a Buddy")
-	buddybutton.DoClick = function()
+		--A nice label.
+		local headthing = vgui.Create("DLabel", backboard)
+		headthing:SetFont("cat_clpp_smaller")
+		headthing:SetText("Prop Protection Buddies")
+		headthing:SetPos(20,10)
+		headthing:SetTextColor(Color(0,0,0))
+		headthing:SizeToContents()
+
+		--list
+		local buddylister = vgui.Create("DListView", backboard)
+		buddylister:SetPos(20, 75)
+		buddylister:SetSize(240, 200)
+		buddylister:SetMultiSelect( false )
+		buddylister:AddColumn( "Name" )
+
+		for k, v in pairs (CATPP_Buddies) do
+			buddylister:AddLine(player.GetBySteamID(k))
+		end
+
+		--add buddy button
+		local buddybutton = vgui.Create("DButton", backboard)
+		buddybutton:SetSize(240, 35)
+		buddybutton:SetPos(20, 300)
+		buddybutton:SetFont("Trebuchet24")
+		buddybutton:SetText("Add a Buddy")
+		buddybutton.DoClick = function()
 
 			local listy = vgui.Create("DMenu")
 				listy:SetPos(gui.MouseX(), gui.MouseY())
@@ -132,7 +151,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 						net.Start("ppaddbuddy")
 							net.WriteString(v:SteamID())
 						net.SendToServer()
-						CATPP_Buddies[v:SteamID()] = v:Nick()
+						table.insert(CATPP_Buddies, #CATPP_Buddies+1, v:SteamID())
 						buddylister:AddLine(v:Nick())
 					end):SetIcon( "icon16/user.png" )
 				end
@@ -151,8 +170,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 				listy:SetPos(gui.MouseX(), gui.MouseY())
 				listy:SetMinimumWidth(140)
 				for k, v in pairs (CATPP_Buddies) do
-						
-					local person = listy:AddOption( v, function() 
+					local person = listy:AddOption( player.GetBySteamID(k), function() 
 						net.Start("ppremovebuddy")
 							net.WriteString(k)
 						net.SendToServer()
@@ -169,9 +187,12 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 
 	end)	
 	
-	spawnmenu.AddToolMenuOption( "cat", "catpp", "catppgeneral", "Settings", "", "", function( panel ) -- We need to populate the toolmenu with something!
+	spawnmenu.AddToolMenuOption( "cat", "catpp", "catppgeneral", "Settings", "", "", function( panel )
 		panel:ClearControls()
-				
+		
+		
+		local ply = LocalPlayer()
+		
 		--Backboard for everything
 		local backboard = vgui.Create( "DPanel", panel )
 		backboard:SetPos( 20, 25 )
@@ -181,7 +202,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 		local headthing = vgui.Create("DLabel", backboard)
 		headthing:SetFont("cat_clpp")
 		headthing:SetText("General Settings")
-		headthing:SetPos(55,10)
+		headthing:SetPos(30,10)
 		headthing:SetTextColor(Color(0,0,255))
 		headthing:SizeToContents()
 		
@@ -200,7 +221,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 			else
 				draw.RoundedBox( 8, 0, 0, physppbut:GetWide(), physppbut:GetTall(), Color( 200, 0, 0, 125 ) )
 			end
-			draw.SimpleText( "Physgun Protection", "cat_clpp", 27, 10, Color(255,255,255,255) )
+			draw.SimpleText( "Physgun Protection", "cat_clpp", 5, 10, Color(255,255,255,255) )
 		end
 		
 		--Toolgun Prop Protection button.
@@ -218,7 +239,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 			else
 				draw.RoundedBox( 8, 0, 0, toolppbut:GetWide(), toolppbut:GetTall(), Color( 200, 0, 0, 125 ) )
 			end
-			draw.SimpleText( "Toolgun Protection", "cat_clpp", 30, 10, Color(255,255,255,255) )
+			draw.SimpleText( "Toolgun Protection", "cat_clpp", 8, 10, Color(255,255,255,255) )
 		end	
 		
 		--Gravgun Prop Protection button.
@@ -236,7 +257,7 @@ hook.Add( "AddToolMenuTabs", "CATPP_ToolMenuAdd", function()
 			else
 				draw.RoundedBox( 8, 0, 0, gravppbut:GetWide(), gravppbut:GetTall(), Color( 200, 0, 0, 125 ) )
 			end
-			draw.SimpleText( "Gravgun Protection", "cat_clpp", 30, 10, Color(255,255,255,255) )
+			draw.SimpleText( "Gravgun Protection", "cat_clpp", 6, 10, Color(255,255,255,255) )
 		end			
 	end)
 	

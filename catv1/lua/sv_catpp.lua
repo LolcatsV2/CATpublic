@@ -169,7 +169,7 @@ local function worlddoors(ply, ent)
 	
 	for k, v in pairs (ents.GetAll()) do
 		v:SetNWString("FounderName", "World")
-		v.PlayerOwner = Entity(0)								// worldspawn
+		v.PlayerOwner = game.GetWorld()		// worldspawn
 	end
 	
 end
@@ -193,14 +193,46 @@ if cleanup then
 	end
 end
 
+-- some things don't call cleanup.Add
+-- Well, screw those things.
+local undonow = nil
+
+if undo then
+	local oldundoplayer = oldundoplayer or undo.SetPlayer
+	local oldundoentity = oldundoentity or undo.AddEntity
+	
+	function undo.AddEntity(ent)
+	
+		undonow = ent
+	
+		oldundoentity(ent)
+	
+	end
+	
+	function undo.SetPlayer(ply)
+		if not IsValid(ply) or not IsValid(undonow) then return oldundoplayer(ply) end
+		
+		undonow:SetPlayerOwner(ply)
+		
+		oldundoplayer(ply)
+	end
+end
+
 --Some silly little helper functions.
 local entity = FindMetaTable("Entity")
 
-function entity:SetPlayerOwner(ply)
+function entity:SetPlayerOwner(ent)
 
-	self:SetNWString("FounderName", tostring(ply:Nick()))
-	self.PlayerOwner = ply
-	self.PlayerID = ply:SteamID()
+	if (!ent:IsPlayer()) then
+		self:SetNWString("FounderName", "World")
+		self.PlayerOwner = ent
+		self.PlayerID = "World"
+		return
+	end
+	
+	self:SetNWString("FounderName", tostring(ent:Nick()))
+	self.PlayerOwner = ent
+	self.PlayerID = ent:SteamID()
 
 end
 
@@ -222,11 +254,11 @@ function CAT_BlockPhysgun(ply, ent)
 
 	if (!CAT_Config.UseCATPP) then return end
 		
-	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == Entity(0) and CAT_CanDoAction(ply, "isadmin")) then return true end
+	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == game.GetWorld() and CAT_CanDoAction(ply, "isadmin")) then return true end
 	
-	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and ent.PlayerOwner != Entity(0)) then return true end		
+	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and ent.PlayerOwner != game.GetWorld()) then return true end		
 
-	if (ent.PlayerOwner and CATPP_Buddies[ent.PlayerOwner:SteamID()] and table.HasValue(CATPP_Buddies[ent.PlayerOwner:SteamID()], ply:SteamID())) then return true end
+	if (ent.PlayerID and CATPP_Buddies[ent.PlayerID] and table.HasValue(CATPP_Buddies[ent.PlayerID], ply:SteamID())) then return true end
 	
 	if (ent == cat_ragdoll) then 
 		if (ply:IsSuperAdmin()) then
@@ -254,14 +286,14 @@ function CAT_BlockToolgun(ply, tr, tool)
 	if (!CAT_Config.UseCATPP) then return end
 			
 	if (CAT_CanTool(ply) == false) then return false end
-
+	
 	local ent = ply:GetEyeTrace().Entity	
 	
-	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == Entity(0) and CAT_CanDoAction(ply, "isadmin")) then return true end
+	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == game.GetWorld() and CAT_CanDoAction(ply, "isadmin")) then return true end
 	
-	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and ent.PlayerOwner != Entity(0)) then return true end		
+	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and ent.PlayerOwner != game.GetWorld()) then return true end		
 		
-	if (ent.PlayerOwner and CATPP_Buddies[ent.PlayerOwner:SteamID()] and table.HasValue(CATPP_Buddies[ent.PlayerOwner:SteamID()], ply:SteamID())) then return true end
+	if (ent.PlayerID and CATPP_Buddies[ent.PlayerID] and table.HasValue(CATPP_Buddies[ent.PlayerID], ply:SteamID())) then return true end
 	
 	if (ent == cat_ragdoll) then 
 		if (ply:IsSuperAdmin()) then
@@ -270,11 +302,6 @@ function CAT_BlockToolgun(ply, tr, tool)
 			return false
 		end
 	end	
-		
-	if ( tool == "duplicator" and !ply:IsAdmin() ) then
-		ply:SendLua("GAMEMODE:AddNotify(\"Duplicator is bad. Use Advanced Duplicator to paste shit.\", NOTIFY_HINT, 5)")
-		return false
-	end
 	
 	if (ent:IsPlayer()) then
 		return false
@@ -303,11 +330,11 @@ hook.Add("CanTool", TAG.."_ToolPP", CAT_BlockToolgun)
 function CAT_BlockGravGun(ply, ent)
 	if (!CAT_Config.UseCATPP) then return end
 		
-	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == Entity(0) and CAT_CanDoAction(ply, "isadmin")) then return true end
+	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == game.GetWorld() and CAT_CanDoAction(ply, "isadmin")) then return true end
 	
-	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and not ent.PlayerOwner == Entity(0)) then return true end		
+	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and not ent.PlayerOwner == game.GetWorld()) then return true end		
 
-	if (ent.PlayerOwner and CATPP_Buddies[ent.PlayerOwner:SteamID()] and table.HasValue(CATPP_Buddies[ent.PlayerOwner:SteamID()], ply:SteamID())) then return true end	
+	if (ent.PlayerID and CATPP_Buddies[ent.PlayerID] and table.HasValue(CATPP_Buddies[ent.PlayerID], ply:SteamID())) then return true end
 	
 	if (gravppenabled) then
 		if (ent.PlayerOwner != ply and ent.PlayerOwner != nil) or (ent.GetPlayer and ent:GetPlayer() != ply) then
@@ -328,11 +355,11 @@ hook.Add("GravGunPunt", TAG.."_GravPuntPP", CAT_BlockGravGun)
 function CAT_BlockPropertyList(ply, property, ent)
 	if (!CAT_Config.UseCATPP) then return end
 		
-	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == Entity(0) and CAT_CanDoAction(ply, "isadmin")) then return true end
+	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == game.GetWorld() and CAT_CanDoAction(ply, "isadmin")) then return true end
 	
-	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and not ent.PlayerOwner == Entity(0)) then return true end	
+	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and not ent.PlayerOwner == game.GetWorld()) then return true end	
 	
-	if (ent.PlayerOwner and CATPP_Buddies[ent.PlayerOwner:SteamID()] and table.HasValue(CATPP_Buddies[ent.PlayerOwner:SteamID()], ply:SteamID())) then return true end	
+	if (ent.PlayerID and CATPP_Buddies[ent.PlayerID] and table.HasValue(CATPP_Buddies[ent.PlayerID], ply:SteamID())) then return true end
 	
 	if (ent.PlayerOwner != ply and ent.PlayerOwner != nil) or (ent.GetPlayer and ent:GetPlayer() != ply) then
 		return false
@@ -346,11 +373,11 @@ hook.Add("CanProperty", TAG.."_PropertyPP", CAT_BlockPropertyList)
 function CAT_BlockDriving(ply, ent)
 	if (!CAT_Config.UseCATPP) then return end
 		
-	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == Entity(0) and CAT_CanDoAction(ply, "isadmin")) then return true end
+	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == game.GetWorld() and CAT_CanDoAction(ply, "isadmin")) then return true end
 	
-	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and not ent.PlayerOwner == Entity(0)) then return true end	
+	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and not ent.PlayerOwner == game.GetWorld()) then return true end	
 	
-	if (ent.PlayerOwner and CATPP_Buddies[ent.PlayerOwner:SteamID()] and table.HasValue(CATPP_Buddies[ent.PlayerOwner:SteamID()], ply:SteamID())) then return true end	
+	if (ent.PlayerID and CATPP_Buddies[ent.PlayerID] and table.HasValue(CATPP_Buddies[ent.PlayerID], ply:SteamID())) then return true end
 	
 	if (ent.PlayerOwner != ply and ent.PlayerOwner != nil) or (ent.GetPlayer and ent:GetPlayer() != ply) then
 		return false
@@ -369,11 +396,11 @@ function CAT_BlockReload(weapon, ply)
 	
 	if (!IsValid(ent)) then return end
 	
-	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == Entity(0) and CAT_CanDoAction(ply, "isadmin")) then return end
+	if (CAT_Config.AdminsTouchWorldProps and ent.PlayerOwner == game.GetWorld() and CAT_CanDoAction(ply, "isadmin")) then return end
 	
-	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and not ent.PlayerOwner == Entity(0)) then return end	
+	if (CAT_Config.AdminsTouchPlayerProps and CAT_CanDoAction(ply, "isadmin") and not ent.PlayerOwner == game.GetWorld()) then return end	
 	
-	if (ent.PlayerOwner and CATPP_Buddies[ent.PlayerOwner:SteamID()] and table.HasValue(CATPP_Buddies[ent.PlayerOwner:SteamID()], ply:SteamID())) then return end	
+	if (ent.PlayerID and CATPP_Buddies[ent.PlayerID] and table.HasValue(CATPP_Buddies[ent.PlayerID], ply:SteamID())) then return true end
 	
 	if (ent.PlayerOwner != ply and ent.PlayerOwner != nil) or (ent.GetPlayer and ent:GetPlayer() != ply) then
 		return false
@@ -390,6 +417,24 @@ end
 hook.Add("OnPhysgunReload", TAG.."_ReloadPP", CAT_BlockReload)
 
 disconplayers = disconplayers or {}
+
+local okaytools = {
+["axis"] = true,
+["ballsocket"] = true,
+["motor"] = true,
+["weld"] = true,
+["inflator"] = true,
+["physprop"] = true,
+["color"] = true,
+["material"] = true,
+["paint"] = true,
+["trail"] = true,
+["remover"] = true,
+["wire"] = true,
+["wire_adv"] = true
+}
+
+
 
 --Cleanup Disconnected players props.
 local function cat_cleandisconprop(ply)
@@ -427,6 +472,10 @@ local function canspawnobject( ply, spawntype )
 	
 	if (!CAT_Config.UseCATPP) then return true end
 	
+	if (ply:GetTool() and okaytools[ply:GetTool().Mode]) then
+		return true
+	end
+		
 	if (!ply.SpamTimer) then
 	
 		ply.SpamTimer = {}
@@ -461,7 +510,7 @@ end
 local function canspawnobjectmessage( ply, spawntype )
 	
 	if (!CAT_Config.UseCATPP) then return true end
-	
+		
 		if (!canspawnobject(ply, spawntype)) then
 		
 			local delay = CAT_Config.AntispamTime
